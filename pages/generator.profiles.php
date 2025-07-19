@@ -207,13 +207,13 @@ if (!function_exists('url_generate_column_data')) {
             }, array_keys($infoList), array_values($infoList)))
         ];
 
-        $articleOut = '<table class="addoff-data-table table table-condensed small"><tbody>';
+        $articleOut = '<table class="addon-url-data-table table table-condensed small"><tbody>';
         foreach ($articleList as $data) {
             $articleOut .= sprintf('<tr><th>%s</th><td>%s</td></tr>', $data[0], $data[1]);
         }
         $articleOut .= '</tbody></table>';
 
-        $dataOut = '<table class="addoff-data-table table table-condensed small"><tbody>';
+        $dataOut = '<table class="addon-url-data-table table table-condensed small"><tbody>';
         foreach ($dataList as $data) {
             $dataOut .= sprintf('<tr><th>%s</th><td class="rex-word-break">%s</td></tr>', $data[0], $data[1]);
         }
@@ -239,7 +239,7 @@ if ($func === '') {
                 ORDER BY    `namespace`';
 
     $list = rex_list::factory($query);
-    $list->addTableAttribute('class', 'addoff-table table-striped');
+    $list->addTableAttribute('class', 'addon-url-table table-striped');
 
     $tdIcon = '<i class="rex-icon fa fa-gears"></i>';
     $thIcon = '<a href="'.$list->getUrl(['func' => 'add']).'"'.rex::getAccesskey($this->i18n('add'), 'add').'><i class="rex-icon rex-icon-add-article"></i></a>';
@@ -304,11 +304,11 @@ if ($func === '') {
 
     $fieldNamespace = $form->addTextField('namespace');
     $fieldNamespace->setHeader('
-        <div class="addoff-grid">
-            <div class="addoff-grid-item" data-addoff-size="2">
+        <div class="addon-url-grid">
+            <div class="addon-url-grid-item" data-addon-url-size="2">
                 <label>'.$this->i18n('url_generator_namespace').'</label>
             </div>
-            <div class="addoff-grid-item" data-addoff-size="3">');
+            <div class="addon-url-grid-item" data-addon-url-size="3">');
     $fieldNamespace->setFooter('
             </div>
         </div>');
@@ -319,11 +319,11 @@ if ($func === '') {
 
     $fieldArticleId = $form->addLinkmapField('article_id');
     $fieldArticleId->setHeader('
-        <div class="addoff-grid">
-            <div class="addoff-grid-item" data-addoff-size="2">
+        <div class="addon-url-grid">
+            <div class="addon-url-grid-item" data-addon-url-size="2">
                 <label>'.$this->i18n('url_generator_structure_article').'</label>
             </div>
-            <div class="addoff-grid-item" data-addoff-size="3">');
+            <div class="addon-url-grid-item" data-addon-url-size="3">');
     $fieldArticleId->setNotice($this->i18n('url_generator_article'));
     $fieldArticleId->getValidator()
         ->add('notEmpty', $this->i18n('url_generator_article_error'))
@@ -335,7 +335,7 @@ if ($func === '') {
 
         $fieldArticleClangId = $form->addSelectField('clang_id');
         $fieldArticleClangId->setHeader('
-                <div class="addoff-grid-item" data-addoff-size="3">');
+                <div class="addon-url-grid-item" data-addon-url-size="3">');
         $fieldArticleClangId->setFooter('
                 </div>
             </div>');
@@ -355,11 +355,11 @@ if ($func === '') {
 
     $fieldTable = $form->addSelectField('table_name');
     $fieldTable->setHeader('
-        <div class="addoff-grid">
-            <div class="addoff-grid-item" data-addoff-size="2">
+        <div class="addon-url-grid">
+            <div class="addon-url-grid-item" data-addon-url-size="2">
                 <label>'.$this->i18n('url_generator_table').'</label>
             </div>
-            <div class="addoff-grid-item" data-addoff-size="3">');
+            <div class="addon-url-grid-item" data-addon-url-size="3">');
     $fieldTable->setFooter('
             </div>
         </div>');
@@ -413,12 +413,12 @@ if ($func === '') {
 
             $f = $fieldContainer->addGroupedField($group, $type, $name);
             $f->setHeader('
-                <hr class="addoff-hr">
-                <div class="addoff-grid">
-                    <div class="addoff-grid-item" data-addoff-size="2">
+                <hr class="addon-url-hr">
+                <div class="addon-url-grid">
+                    <div class="addon-url-grid-item" data-addon-url-size="2">
                         <label>'.$this->i18n('url_generator_identify_record').'</label>
                     </div>
-                    <div class="addoff-grid-item" data-addoff-size="3">');
+                    <div class="addon-url-grid-item" data-addon-url-size="3">');
             $f->setFooter('
                     </div>');
             $f->setAttribute('disabled', 'true');
@@ -433,7 +433,7 @@ if ($func === '') {
 
                 $f = $fieldContainer->addGroupedField($group, $type, $name);
                 $f->setHeader('
-                        <div class="addoff-grid-item" data-addoff-size="3">');
+                        <div class="addon-url-grid-item" data-addon-url-size="3">');
                 $f->setFooter('
                         </div>
                     </div>');
@@ -457,8 +457,8 @@ if ($func === '') {
 
                     $f = $fieldContainer->addGroupedField($group, $type, $name);
                     $f->setHeader('
-                                <div class="addoff-grid">
-                                    <div class="addoff-grid-item" data-addoff-size="3of10" data-addoff-shift="2of10">');
+                                <div class="addon-url-grid">
+                                    <div class="addon-url-grid-item" data-addon-url-size="3of10" data-addon-url-shift="2of10">');
                     $f->setFooter('
                                     </div>
                                 </div>');
@@ -476,18 +476,18 @@ if ($func === '') {
                 $prependHeader = '';
                 if ($i == 1) {
                     $prependHeader = '
-                    <hr class="addoff-hr" />
-                    <div class="addoff-grid">
-                        <div class="addoff-grid-item" data-addoff-size="2">
+                    <hr class="addon-url-hr" />
+                    <div class="addon-url-grid">
+                        <div class="addon-url-grid-item" data-addon-url-size="2">
                             <label>'.$this->i18n('url_generator_restriction').'</label>
                             <p class="help-block">'.$this->i18n('url_generator_restriction_notice').'</p>
                         </div>
-                        <div class="addoff-grid-item" data-addoff-size="10">';
+                        <div class="addon-url-grid-item" data-addon-url-size="10">';
                 }
                 $f->setHeader(
                         $prependHeader.'
-                            <div class="addoff-grid">
-                                <div class="addoff-grid-item" data-addoff-size="3of10">');
+                            <div class="addon-url-grid">
+                                <div class="addon-url-grid-item" data-addon-url-size="3of10">');
                 $f->setFooter('
                                 </div>');
                 $f->setAttribute('disabled', 'true');
@@ -500,7 +500,7 @@ if ($func === '') {
                 /** @var rex_form_select_element $f */
 
                 $f = $fieldContainer->addGroupedField($group, $type, $name);
-                $f->setHeader('<div class="addoff-grid-item" data-addoff-size="1of10">');
+                $f->setHeader('<div class="addon-url-grid-item" data-addon-url-size="1of10">');
                 $f->setFooter('</div>');
                 $f->setAttribute('disabled', 'true');
                 $select = $f->getSelect();
@@ -512,7 +512,7 @@ if ($func === '') {
                 /* @var $f rex_form_element */
                 $f = $fieldContainer->addGroupedField($group, $type, $name);
                 $f->setHeader('
-                                <div class="addoff-grid-item" data-addoff-size="3of10">');
+                                <div class="addon-url-grid-item" data-addon-url-size="3of10">');
 
                 $appendFooter = ($i == Profile::RESTRICTION_COUNT) ? '</div></div>' : '';
                 $f->setFooter('
@@ -528,7 +528,7 @@ if ($func === '') {
                     /** @var rex_form_select_element $f */
 
                     $f = $fieldContainer->addGroupedField($group, $type, $name);
-                    $f->setHeader('<div class="addoff-grid-item text-center addoff-text-large" data-addoff-size="1">');
+                    $f->setHeader('<div class="addon-url-grid-item text-center addon-url-text-large" data-addon-url-size="1">');
                     $f->setFooter('</div>');
                     $f->setAttribute('disabled', 'true');
                     $select = $f->getSelect();
@@ -541,20 +541,20 @@ if ($func === '') {
 
                 $f = $fieldContainer->addGroupedField($group, $type, $name);
 
-                // $prependHeader = '<div class="addoff-grid-item text-center addoff-text-large" data-addoff-size="1"><b>/</b></div>';
+                // $prependHeader = '<div class="addon-url-grid-item text-center addon-url-text-large" data-addon-url-size="1"><b>/</b></div>';
                 $prependHeader = '';
                 if ($i == 1) {
                     $prependHeader = '
-                    <hr class="addoff-hr" />
-                    <div class="addoff-grid">
-                        <div class="addoff-grid-item" data-addoff-size="2">
+                    <hr class="addon-url-hr" />
+                    <div class="addon-url-grid">
+                        <div class="addon-url-grid-item" data-addon-url-size="2">
                             <label>'.$this->i18n('url').'</label>
                             <p class="help-block">'.$this->i18n('url_generator_url_notice').'</p>
                         </div>
                     ';
                 }
                 $f->setHeader($prependHeader.'
-                        <div class="addoff-grid-item" data-addoff-size="2">');
+                        <div class="addon-url-grid-item" data-addon-url-size="2">');
 
                 $appendFooter = ($i == Profile::SEGMENT_PART_COUNT) ? '</div>' : '';
                 $f->setFooter('
@@ -571,19 +571,19 @@ if ($func === '') {
                 $prependHeader = '';
                 if ($i == 1) {
                     $prependHeader = '
-                    <hr class="addoff-hr">
-                    <div class="addoff-grid">
-                        <div class="addoff-grid-item" data-addoff-size="2">
+                    <hr class="addon-url-hr">
+                    <div class="addon-url-grid">
+                        <div class="addon-url-grid-item" data-addon-url-size="2">
                             <label>'.$this->i18n('url_generator_relation_paths').'</label>
                             <p class="help-block">'.$this->i18n('url_generator_relation_column_notice').'</p>
                             <p class="help-block">'.$this->i18n('url_generator_relation_position_in_url').'<br />'.$this->i18n('url_generator_relation_position_notice').' '.$this->i18n('url_generator_relation_position_notice__2').'</p>
                         </div>
-                        <div class="addoff-grid-item" data-addoff-size="10">
-                            <div class="addoff-grid">
-                                <div class="addoff-grid-item" data-addoff-size="2of10" data-addoff-shift="1of10">
+                        <div class="addon-url-grid-item" data-addon-url-size="10">
+                            <div class="addon-url-grid">
+                                <div class="addon-url-grid-item" data-addon-url-size="2of10" data-addon-url-shift="1of10">
                                     <p class="help-block">'.$this->i18n('url_generator_relation_column', '').'</p>
                                 </div>
-                                <div class="addoff-grid-item" data-addoff-size="2of10">
+                                <div class="addon-url-grid-item" data-addon-url-size="2of10">
                                     <p class="help-block">'.$this->i18n('url_generator_relation_position_in_url').'</p>
                                 </div>
                             </div>';
@@ -596,9 +596,9 @@ if ($func === '') {
                 $f = $fieldContainer->addGroupedField($group, $type, $name);
                 $f->setHeader(
                         $prependHeader.'
-                            <div class="addoff-grid">
-                                <div class="addoff-grid-item" data-addoff-size="1of10"><label>'.$this->i18n('url_generator_relation', $i).'</label></div>
-                                <div class="addoff-grid-item" data-addoff-size="2of10">');
+                            <div class="addon-url-grid">
+                                <div class="addon-url-grid-item" data-addon-url-size="1of10"><label>'.$this->i18n('url_generator_relation', $i).'</label></div>
+                                <div class="addon-url-grid-item" data-addon-url-size="2of10">');
                 $f->setFooter('
                                 </div>');
                 $f->setPrefix('<div class="js-change-relation-'.$i.'-select">');
@@ -615,15 +615,15 @@ if ($func === '') {
 
                 $f = $fieldContainer->addGroupedField($group, $type, $name);
                 $f->setHeader('
-                                <div class="addoff-grid-item" data-addoff-size="2of10">');
+                                <div class="addon-url-grid-item" data-addon-url-size="2of10">');
                 $appendFooter = '';
                 if ($i == Profile::RELATION_COUNT) {
                     $appendFooter = '
-                            <div class="addoff-grid">
-                                <div class="addoff-grid-item" data-addoff-size="1of10">
+                            <div class="addon-url-grid">
+                                <div class="addon-url-grid-item" data-addon-url-size="1of10">
                                     <p class="help-block">'.$this->i18n('url_generator_relation_position_eg_label', '').'</p>
                                 </div>
-                                <div class="addoff-grid-item" data-addoff-size="4of10">
+                                <div class="addon-url-grid-item" data-addon-url-size="4of10">
                                     <p class="help-block">'.$this->i18n('url_generator_relation_position_eg_code').'</p>
                                 </div>
                             </div>
@@ -644,12 +644,12 @@ if ($func === '') {
             /* @var $f rex_form_element */
             $f = $fieldContainer->addGroupedField($group, $type, $name);
             $f->setHeader('
-                <hr class="addoff-hr">
-                <div class="addoff-grid">
-                    <div class="addoff-grid-item" data-addoff-size="2">
+                <hr class="addon-url-hr">
+                <div class="addon-url-grid">
+                    <div class="addon-url-grid-item" data-addon-url-size="2">
                         <label>'.$this->i18n('url_generator_paths').'</label>
                     </div>
-                    <div class="addoff-grid-item" data-addoff-size="4">');
+                    <div class="addon-url-grid-item" data-addon-url-size="4">');
             $f->setFooter('
                     </div>');
             $f->setPrefix('<label>'.$this->i18n('url_generator_append_user_path').'</label>');
@@ -662,7 +662,7 @@ if ($func === '') {
 
             $f = $fieldContainer->addGroupedField($group, $type, $name);
             $f->setHeader('
-                    <div class="addoff-grid-item" data-addoff-size="3">');
+                    <div class="addon-url-grid-item" data-addon-url-size="3">');
             $f->setFooter('
                     </div>
                 </div>');
@@ -677,12 +677,12 @@ if ($func === '') {
 
             $f = $fieldContainer->addGroupedField($group, $type, $name);
             $f->setHeader('
-                <hr class="addoff-hr">
-                <div class="addoff-grid">
-                    <div class="addoff-grid-item" data-addoff-size="2">
+                <hr class="addon-url-hr">
+                <div class="addon-url-grid">
+                    <div class="addon-url-grid-item" data-addon-url-size="2">
                         <label>'.$this->i18n('url_generator_seo').'</label>
                     </div>
-                    <div class="addoff-grid-item" data-addoff-size="3">');
+                    <div class="addon-url-grid-item" data-addon-url-size="3">');
             $f->setFooter('
                     </div>');
             $f->setAttribute('disabled', 'true');
@@ -697,7 +697,7 @@ if ($func === '') {
 
             $f = $fieldContainer->addGroupedField($group, $type, $name);
             $f->setHeader('
-                    <div class="addoff-grid-item" data-addoff-size="3">');
+                    <div class="addon-url-grid-item" data-addon-url-size="3">');
             $f->setFooter('
                     </div>');
             $f->setAttribute('disabled', 'true');
@@ -712,7 +712,7 @@ if ($func === '') {
 
             $f = $fieldContainer->addGroupedField($group, $type, $name);
             $f->setHeader('
-                    <div class="addoff-grid-item" data-addoff-size="3">');
+                    <div class="addon-url-grid-item" data-addon-url-size="3">');
             $f->setFooter('
                     </div>
                 </div>');
@@ -728,12 +728,12 @@ if ($func === '') {
 
             $f = $fieldContainer->addGroupedField($group, $type, $name);
             $f->setHeader('
-                <hr class="addoff-hr">
-                <div class="addoff-grid">
-                    <div class="addoff-grid-item" data-addoff-size="2">
+                <hr class="addon-url-hr">
+                <div class="addon-url-grid">
+                    <div class="addon-url-grid-item" data-addon-url-size="2">
                         <label>'.$this->i18n('url_generator_sitemap').'</label>
                     </div>
-                    <div class="addoff-grid-item" data-addoff-size="2">');
+                    <div class="addon-url-grid-item" data-addon-url-size="2">');
             $f->setFooter('
                     </div>');
             $f->setAttribute('disabled', 'true');
@@ -747,7 +747,7 @@ if ($func === '') {
 
             $f = $fieldContainer->addGroupedField($group, $type, $name);
             $f->setHeader('
-                    <div class="addoff-grid-item" data-addoff-size="2">');
+                    <div class="addon-url-grid-item" data-addon-url-size="2">');
             $f->setFooter('
                     </div>');
             $f->setAttribute('disabled', 'true');
@@ -761,7 +761,7 @@ if ($func === '') {
 
             $f = $fieldContainer->addGroupedField($group, $type, $name);
             $f->setHeader('
-                    <div class="addoff-grid-item" data-addoff-size="2">');
+                    <div class="addon-url-grid-item" data-addon-url-size="2">');
             $f->setFooter('
                     </div>');
             $f->setAttribute('disabled', 'true');
@@ -775,7 +775,7 @@ if ($func === '') {
 
             $f = $fieldContainer->addGroupedField($group, $type, $name);
             $f->setHeader('
-                    <div class="addoff-grid-item" data-addoff-size="3">');
+                    <div class="addon-url-grid-item" data-addon-url-size="3">');
             $f->setFooter('
                     </div>
                 </div>');
@@ -792,11 +792,11 @@ if ($func === '') {
 
         $f = $form->addSelectField('relation_'.$i.'_table_name');
         $f->setHeader('
-            <div class="addoff-grid">
-                <div class="addoff-grid-item" data-addoff-size="2">
+            <div class="addon-url-grid">
+                <div class="addon-url-grid-item" data-addon-url-size="2">
                     <label>'.$this->i18n('url_generator_table').'</label>
                 </div>
-                <div class="addoff-grid-item" data-addoff-size="2">');
+                <div class="addon-url-grid-item" data-addon-url-size="2">');
         $f->setFooter('
                 </div>
             </div>');
@@ -849,12 +849,12 @@ if ($func === '') {
 
                 $f = $fieldContainer->addGroupedField($group, $type, $name);
                 $f->setHeader('
-                    <hr class="addoff-hr" />
-                    <div class="addoff-grid">
-                        <div class="addoff-grid-item" data-addoff-size="2">
+                    <hr class="addon-url-hr" />
+                    <div class="addon-url-grid">
+                        <div class="addon-url-grid-item" data-addon-url-size="2">
                             <label>'.$this->i18n('url_generator_identify_record').'</label>
                         </div>
-                        <div class="addoff-grid-item" data-addoff-size="3">');
+                        <div class="addon-url-grid-item" data-addon-url-size="3">');
                 $f->setFooter('
                         </div>');
                 $f->setAttribute('disabled', 'true');
@@ -869,7 +869,7 @@ if ($func === '') {
 
                     $f = $fieldContainer->addGroupedField($group, $type, $name);
                     $f->setHeader('
-                            <div class="addoff-grid-item" data-addoff-size="3">');
+                            <div class="addon-url-grid-item" data-addon-url-size="3">');
                     $f->setFooter('
                             </div>
                         </div>');
@@ -895,7 +895,7 @@ if ($func === '') {
                         /** @var rex_form_select_element $f */
 
                         $f = $fieldContainer->addGroupedField($group, $type, $name);
-                        $f->setHeader('<div class="addoff-grid-item text-center addoff-text-large" data-addoff-size="1">');
+                        $f->setHeader('<div class="addon-url-grid-item text-center addon-url-text-large" data-addon-url-size="1">');
                         $f->setFooter('</div>');
                         $f->setAttribute('disabled', 'true');
                         $select = $f->getSelect();
@@ -908,20 +908,20 @@ if ($func === '') {
 
                     $f = $fieldContainer->addGroupedField($group, $type, $name);
 
-                    // $prependHeader = '<div class="addoff-grid-item text-center addoff-text-large" data-addoff-size="1"><b>/</b></div>';
+                    // $prependHeader = '<div class="addon-url-grid-item text-center addon-url-text-large" data-addon-url-size="1"><b>/</b></div>';
                     $prependHeader = '';
                     if ($j === 1) {
                         $prependHeader = '
-                        <hr class="addoff-hr" />
-                        <div class="addoff-grid">
-                            <div class="addoff-grid-item" data-addoff-size="2">
+                        <hr class="addon-url-hr" />
+                        <div class="addon-url-grid">
+                            <div class="addon-url-grid-item" data-addon-url-size="2">
                                 <label>'.$this->i18n('url').'</label>
                                 <p class="help-block">'.$this->i18n('url_generator_url_notice').'</p>
                             </div>
                         ';
                     }
                     $f->setHeader($prependHeader.'
-                            <div class="addoff-grid-item" data-addoff-size="2">');
+                            <div class="addon-url-grid-item" data-addon-url-size="2">');
 
                     $appendFooter = ($j == Profile::SEGMENT_PART_COUNT) ? '</div>' : '';
                     $f->setFooter('
