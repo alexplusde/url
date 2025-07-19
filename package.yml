@@ -2,7 +2,7 @@ package: url
 version: '2.2.1'
 author: Alexander Walther, urspr. Thomas Blum
 supportpage: 'https://github.com/alexplusde/url/'
-
+release_url: 'https://api.github.com/repos/alexplusde/url/releases'
 page:
     title: 'translate:url'
     perm: admin[]
@@ -16,6 +16,10 @@ page:
                     title: 'translate:url_generator_profiles'
                 urls:
                     title: 'translate:url_generator_urls_generated'
+        update:
+            title: 'translate:url_generator_update'
+            description: 'translate:url_generator_update_description'
+            icon: rex-icon fa fa-refresh
         help:
             title: translate:url_generator_help
             pjax: false
