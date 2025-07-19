@@ -1,5 +1,5 @@
 package: url
-version: '2.2.1'
+version: '2.3.0-dev-2025-07-20'
 author: Alexander Walther, urspr. Thomas Blum
 supportpage: 'https://github.com/alexplusde/url/'
 release_url: 'https://api.github.com/repos/alexplusde/url/releases'
