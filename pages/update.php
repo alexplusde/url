@@ -17,7 +17,7 @@ try {
         $sections = '';
         foreach ($data as $release) {
             $tag = ltrim($release['tag_name'] ?? '', 'v');
-            if (!$tag || version_compare($tag, $currentVersion, '<=')) {
+            if (!$tag || rex_version::compare($tag, $currentVersion, '<=')) {
                 continue;
             }
             $found = true;
@@ -30,13 +30,11 @@ try {
             $previewLabel = $isPreview ? ' <span class="label label-warning">Preview</span>' : '';
             $releaseLink = $releaseUrl ? '<a href="' . htmlspecialchars($releaseUrl) . '" target="_blank">' . $title . '</a>' : $title;
             $installBtn = $zipUrl ? '<a href="' . htmlspecialchars($zipUrl) . '" class="btn btn-primary" target="_blank"><i class="fa fa-download"></i> ZIP herunterladen</a>' : '';
-            $alert = $isPreview ? rex_view::info('Dies ist eine Preview-Version.') : rex_view::success('Stable Release.');
             $fragment = new rex_fragment();
             $fragment->setVar('class', $isPreview ? 'info' : 'success', false);
             $fragment->setVar('title', 'Neue Version: ' . $releaseLink . $previewLabel, false);
             $fragment->setVar(
                 'body',
-                $alert .
                 '<p><strong>Veröffentlicht am:</strong> ' . $publishedAt . '</p>' .
                 ($body ? '<div class="release-notes markdown-body">' . $body . '</div>' : '') .
                 '<div class="mt-3">' . $installBtn . '</div>',
