@@ -105,3 +105,35 @@ url_yform_value_description = Fügt einen Link zum Frontend hinzu, der durch das
 
 // Löschen
 url_generate_notice_url_param_key = Man benötigt beim Benutzen von rex_getUrl nicht mehr die Artikel-Id vom oben ausgewählten Artikel. Aus<br /><code>rex_getUrl(4, '', ['id' => 5])</code> wird <code>rex_getUrl('', '', ['news-id' => 5])</code>
+
+
+// Neue URL-Backendansicht
+url_generator_profiles_article = Artikel
+url_generator_profiles_clang = Sprache
+url_generator_profiles_table = Tabelle
+url_generator_profiles_domain = Domain
+url_generator_profiles_namespace = Namespace
+url_generator_profiles_relation = Relation
+url_generator_profiles_relation_column = Relation Spalte
+url_generator_profiles_relation_table = Relation Tabelle
+url_generator_profiles_yform_data = Daten bearbeiten
+url_generator_profiles_frontend = Anzeigen
+url_generator_profiles_backend = Editieren
+
+url.profile.append_structure_categories = Unterkategorien anhängen
+url.profile.append_structure_categories.none = Keine Unterkategorien
+
+url.profile.append_user_paths = Eigene Pfade anhängen
+url.profile.append_user_paths.none = Keine eigenen Pfade
+
+url_generator_profiles_relations = Relationen
+url.profile.segments = Schema
+
+url.profile.seo_title = Titel
+url.profile.seo_description = Beschreibung
+url.profile.seo_image = Bild
+url.profile.sitemap-lastmod = Letzte Änderung
+url.profile.not_set = keine Auswahl
+// Neue Update-Seite
+
+url_generator_update = Neue Version verfügbar
