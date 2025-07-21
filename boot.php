@@ -130,3 +130,79 @@ if (null !== Url::getRewriter() && Url::getRewriter()->getSeoTagsExtensionPoint(
 
     }, rex_extension::EARLY);
 }
+
+
+    if(rex::isFrontend()) {
+    rex_extension::register('PACKAGES_INCLUDED', function () {
+        $requestUri = $_SERVER['REQUEST_URI'] ?? '';
+    
+        // 1. Sitemap-Index unter /sitemap.xml
+        if (preg_match('~(^|/)sitemap\.xml$~', $requestUri)) {
+            $base = rex_yrewrite::getCurrentDomain()->getUrl();
+            $lastmod = date(DATE_W3C);
+    
+            // Profile aus URL-Addon auslesen
+            $profiles = [];
+            if (rex_addon::get('url')->isAvailable()) {
+                $profiles = \Url\Profile::all();
+            }
+    
+            rex_response::cleanOutputBuffers();
+            echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+            echo '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+            // Eintrag für die klassische YRewrite-Sitemap
+            echo '  <sitemap>' . "\n";
+            echo '    <loc>' . $base . 'sitemap-default.xml</loc>' . "\n";
+            echo '    <lastmod>' . $lastmod . '</lastmod>' . "\n";
+            echo '  </sitemap>' . "\n";
+            // Einträge für alle Profile
+            foreach ($profiles as $profile) {
+                $profileName = $profile->getKey(); // oder $profile->getNamespace() je nach URL-Version
+                echo '  <sitemap>' . "\n";
+                echo '    <loc>' . $base . 'sitemap-profile-' . $profileName . '.xml</loc>' . "\n";
+                echo '    <lastmod>' . $lastmod . '</lastmod>' . "\n";
+                echo '  </sitemap>' . "\n";
+            }
+            echo '</sitemapindex>';
+            rex_response::sendContent('', 'application/xml');
+            exit;
+        }
+    
+        // 2. Klassische YRewrite-Sitemap unter /sitemap-default.xml
+        if (preg_match('~(^|/)sitemap-default\.xml$~', $requestUri)) {
+            rex_yrewrite_seo::sendSitemap();
+            exit;
+        }
+    
+        // 3. Einzelne Profil-Sitemaps unter /sitemap-profile-<profil>.xml
+        if (preg_match('~(^|/)sitemap-profile-([a-zA-Z0-9_-]+)\.xml$~', $requestUri, $match)) {
+            $profileName = $match[2];
+            if (rex_addon::get('url')->isAvailable()) {
+                $profile = \Url\Profile::get($profileName);
+                if ($profile) {
+                    $urls = $profile->getGenerator()->getUrls(); // Liefert ein Array mit allen URLs für das Profil
+                    rex_response::cleanOutputBuffers();
+                    header('Content-Type: application/xml');
+                    echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+                    echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+                    foreach ($urls as $url) {
+                        $loc = htmlspecialchars($url->getUrl());
+                        $lastmod = $url->getLastMod() ? date(DATE_W3C, strtotime($url->getLastMod())) : null;
+                        echo '  <url>' . "\n";
+                        echo '    <loc>' . $loc . '</loc>' . "\n";
+                        if ($lastmod) {
+                            echo '    <lastmod>' . $lastmod . '</lastmod>' . "\n";
+                        }
+                        echo '  </url>' . "\n";
+                    }
+                    echo '</urlset>';
+                    exit;
+                }
+            }
+            // Profil nicht gefunden
+            rex_response::setStatus(404);
+            echo 'Not found';
+            exit;
+        }
+    });
+}
