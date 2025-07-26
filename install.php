@@ -66,4 +66,7 @@ $sql->setQuery('UPDATE '.\rex::getTable('url_generator_url').' SET url_hash = SH
     ->ensure();
 
 // Add index for url column to speed up queries - needs restriction on length due to MySQL index length limit for TEXT columns
-$sql->setQuery('ALTER TABLE `rex_url_generator_url` ADD INDEX `url` (`url`(255))');
+$indexes = $sql->getArray('SHOW INDEX FROM `rex_url_generator_url` WHERE Key_name = "url"');
+if (count($indexes) === 0) {
+    $sql->setQuery('ALTER TABLE `rex_url_generator_url` ADD INDEX `url` (`url`(255))');
+}
