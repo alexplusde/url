@@ -289,6 +289,7 @@ class Profile
     public function buildUrlsByDatasetId(int|string $datasetId): void
     {
         $items = $this->getDataset('id', $datasetId);
+
         foreach ($items as $item) {
             $this->createAndSaveUrls($item);
         }
@@ -329,7 +330,8 @@ class Profile
                 for ($index = 1; $index <= self::SEGMENT_PART_COUNT; ++$index) {
                     if ($dataset->hasValue($relation->getAlias().'_segment_part_'.$index)) {
                         $concatSegmentParts .= $relation->getSegmentPartSeparators()[$index] ?? '';
-                        $concatSegmentParts .= Url::getRewriter()->normalize($dataset->getValue($relation->getAlias().'_segment_part_'.$index), $clangId);
+                        $value = $dataset->getValue($relation->getAlias().'_segment_part_'.$index);
+                        $concatSegmentParts .= Url::getRewriter()->normalize($value !== null ? $value : '', $clangId);
                     }
                 }
                 if ($relation->getSegmentPosition() === 'BEFORE') {
@@ -602,12 +604,12 @@ class Profile
         return isset(self::$profiles[$id]);
     }
 
-    protected function getDataset(string $primaryColumnName, int|string $primaryId): rex_yform_manager_dataset
+    protected function getDataset(string $primaryColumnName, int|string $primaryId): ?rex_yform_manager_dataset
     {
         $query = $this->buildQuery();
         $query->where($this->getColumnNameWithAlias($primaryColumnName), $primaryId);
         // $items = \rex_sql::factory()->setDebug()->getArray($query->getQuery(), $query->getParams());
-        return $query->find();
+        return $query->findOne();
     }
 
     protected function getDatasets(): rex_yform_manager_collection
