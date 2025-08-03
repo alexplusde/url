@@ -130,6 +130,13 @@ echo rex_i18n::msg('url.profile.segments')  . ':' . $url_segments;
 					<i class="rex-icon fa-list"></i>
 					<?php echo rex_i18n::msg('url_generator_profiles_yform_data'); ?>
 				</a>
+				<?php
+				// Display dataset identification field only if it's not the default 'id'
+				$columnId = $tableParameters['column_id'] ?? 'id';
+				if ($columnId !== 'id') {
+					echo '<br><small class="text-muted">' . rex_i18n::msg('url_generator_identify_record') . ': <code>' . htmlspecialchars($columnId) . '</code></small>';
+				}
+				?>
 				<!-- Relationen -->
 				<h5><i class="rex-icon fa-project-diagram"></i>
 					<?= rex_i18n::msg('url_generator_profiles_relations')  ?>
