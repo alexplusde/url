@@ -1,0 +1,18 @@
+# Composer
+vendor/composer/tmp-*
+vendor/composer/autoload_static.php
+
+# Temporary files
+tmp/
+.tmp/
+*.tmp
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
