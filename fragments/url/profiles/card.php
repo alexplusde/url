@@ -130,6 +130,18 @@ echo rex_i18n::msg('url.profile.segments')  . ':' . $url_segments;
 					<i class="rex-icon fa-list"></i>
 					<?php echo rex_i18n::msg('url_generator_profiles_yform_data'); ?>
 				</a>
+				
+				<?php
+				// Display YForm model class if available
+				if ($is_yform_table && class_exists('rex_yform_manager_dataset') && method_exists('rex_yform_manager_dataset', 'getModelClass')) {
+					$modelClass = rex_yform_manager_dataset::getModelClass($tableName);
+					if ($modelClass) {
+						echo '<br><small>' . makeLabel('Model: ' . htmlspecialchars($modelClass), 'info', 'fa-code') . '</small>';
+					} else {
+						echo '<br><small>' . makeLabel('Model: ' . rex_i18n::msg('url.profile.not_set'), 'default', 'fa-times') . '</small>';
+					}
+				}
+				?>
 				<!-- Relationen -->
 				<h5><i class="rex-icon fa-project-diagram"></i>
 					<?= rex_i18n::msg('url_generator_profiles_relations')  ?>
