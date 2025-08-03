@@ -96,9 +96,13 @@ echo rex_i18n::msg('url.profile.segments')  . ':' . $url_segments;
 ?>
 				<p class="help-block rex-note" style="font-size: 0.8em;">
 					Aufruf via
-					<code>rex_getUrl('', '', ['<?= htmlspecialchars($profile['namespace'] ?? '') ?>' => {id}])</code>
+					<code class="url-copy-code" 
+						  data-copy="rex_getUrl('', '', ['<?= htmlspecialchars($profile['namespace'] ?? '') ?>' => {id}])" 
+						  title="Klicken zum Kopieren">rex_getUrl('', '', ['<?= htmlspecialchars($profile['namespace'] ?? '') ?>' => {id}])</code>
 					oder via Artikel
-					<code>rex_article::get(<?= $article->getId() ?>)->getUrl(['<?= htmlspecialchars($profile['namespace'] ?? '') ?>' => {id}])</code><br>
+					<code class="url-copy-code" 
+						  data-copy="rex_article::get(<?= $article->getId() ?>)->getUrl(['<?= htmlspecialchars($profile['namespace'] ?? '') ?>' => {id}])" 
+						  title="Klicken zum Kopieren">rex_article::get(<?= $article->getId() ?>)->getUrl(['<?= htmlspecialchars($profile['namespace'] ?? '') ?>' => {id}])</code><br>
 
 
 				</p>
@@ -209,3 +213,93 @@ if ($tableParameters['column_sitemap_lastmod'] !== '') {
 		</a>
 	</div>
 </div>
+
+<script type="text/javascript">
+(function($) {
+    // Copy to clipboard functionality
+    function copyToClipboard(text) {
+        if (navigator.clipboard && window.isSecureContext) {
+            // Modern clipboard API
+            return navigator.clipboard.writeText(text);
+        } else {
+            // Fallback for older browsers
+            return new Promise(function(resolve, reject) {
+                var textArea = document.createElement("textarea");
+                textArea.value = text;
+                textArea.style.position = "fixed";
+                textArea.style.left = "-999999px";
+                textArea.style.top = "-999999px";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                
+                try {
+                    var successful = document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    if (successful) {
+                        resolve();
+                    } else {
+                        reject(new Error('Copy failed'));
+                    }
+                } catch (err) {
+                    document.body.removeChild(textArea);
+                    reject(err);
+                }
+            });
+        }
+    }
+
+    function showCopyFeedback(element) {
+        var feedback = $('<span class="url-copy-feedback">Kopiert!</span>');
+        element.css('position', 'relative').append(feedback);
+        
+        setTimeout(function() {
+            feedback.css('opacity', '1');
+        }, 10);
+        
+        setTimeout(function() {
+            feedback.css('opacity', '0');
+            setTimeout(function() {
+                feedback.remove();
+            }, 300);
+        }, 1500);
+    }
+
+    // Event handler for copy buttons
+    $(document).on('click', '.url-copy-code', function(e) {
+        e.preventDefault();
+        var $this = $(this);
+        var textToCopy = $this.data('copy');
+        
+        if (!textToCopy) {
+            return;
+        }
+        
+        copyToClipboard(textToCopy).then(function() {
+            // Success feedback
+            $this.addClass('copied');
+            showCopyFeedback($this);
+            
+            setTimeout(function() {
+                $this.removeClass('copied');
+            }, 2000);
+        }).catch(function(err) {
+            // Error feedback
+            console.error('Copy failed:', err);
+            var feedback = $('<span class="url-copy-feedback" style="background: #dc3545;">Fehler beim Kopieren</span>');
+            $this.css('position', 'relative').append(feedback);
+            
+            setTimeout(function() {
+                feedback.css('opacity', '1');
+            }, 10);
+            
+            setTimeout(function() {
+                feedback.css('opacity', '0');
+                setTimeout(function() {
+                    feedback.remove();
+                }, 300);
+            }, 2000);
+        });
+    });
+})(jQuery);
+</script>
