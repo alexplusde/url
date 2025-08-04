@@ -200,8 +200,8 @@ if (null !== Url::getRewriter() && Url::getRewriter()->getSeoTagsExtensionPoint(
                 }
             }
             // Profil nicht gefunden
-            rex_response::setStatus(404);
-            echo 'Not found';
+            $xmlError = '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . '<error>Not found</error>';
+            rex_response::sendContent($xmlError, 'application/xml', true, 404);
             exit;
         }
     });
