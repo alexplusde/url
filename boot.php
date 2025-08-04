@@ -132,7 +132,7 @@ if (null !== Url::getRewriter() && Url::getRewriter()->getSeoTagsExtensionPoint(
 }
 
 
-    if(rex::isFrontend()) {
+    if (rex::isFrontend()) {
     rex_extension::register('PACKAGES_INCLUDED', function () {
         $requestUri = $_SERVER['REQUEST_URI'] ?? '';
     
