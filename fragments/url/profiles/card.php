@@ -50,7 +50,7 @@ if ($total > 0) {
 }
 
 $is_yform_table = false;
-if (rex_yform_manager_table::get($tableName)) {
+if (class_exists('rex_yform_manager_table') && rex_yform_manager_table::get($tableName)) {
     $is_yform_table = true;
     // Link zur YForm-Tabelle
     $backend_page = rex_url::backendPage('yform/manager/data_edit', [
