@@ -11,6 +11,12 @@ class ProfileService extends \rex_sql
      */
     private $tableName = 'url_generator_profile';
 
+    /**
+     * Stores validation errors.
+     * @var array
+     */
+    private array $validationErrors = [];
+
     private int $id;
     private string $namespace;
     private int $article_id;
@@ -254,7 +260,7 @@ class ProfileService extends \rex_sql
      */
     public function updateProfile(int $id, array $data): bool
     {
-        if (!$this->validateProfileData($data)) {
+        if (!$this->validateProfileData($data, $id)) {
             return false;
         }
 
@@ -298,23 +304,42 @@ class ProfileService extends \rex_sql
      * Validates profile data.
      *
      * @param array $data Profile data
+     * @param int|null $excludeId ID to exclude from duplicate check (for updates)
      * @return bool Validation result
      */
-    private function validateProfileData(array $data): bool
+    private function validateProfileData(array $data, ?int $excludeId = null): bool
     {
+        $this->validationErrors = [];
+        
         // Required fields
         if (empty($data['namespace']) || !preg_match('/^[a-z0-9_-]*$/', $data['namespace'])) {
-            $this->addGlobalUpdateFields(['Namespace is required and must contain only lowercase letters, numbers, underscores and hyphens']);
+            $this->validationErrors[] = 'Namespace is required and must contain only lowercase letters, numbers, underscores and hyphens';
             return false;
         }
 
         if (empty($data['article_id']) || !is_numeric($data['article_id']) || $data['article_id'] < 1) {
-            $this->addGlobalUpdateFields(['Article ID is required and must be a positive integer']);
+            $this->validationErrors[] = 'Article ID is required and must be a positive integer';
             return false;
         }
 
         if (empty($data['table_name'])) {
-            $this->addGlobalUpdateFields(['Table name is required']);
+            $this->validationErrors[] = 'Table name is required';
+            return false;
+        }
+
+        // Check for duplicate namespace within same article/clang context
+        $duplicateCheck = \rex_sql::factory();
+        $query = 'SELECT id FROM ' . \rex::getTable($this->tableName) . ' WHERE namespace = ? AND article_id = ? AND clang_id = ?';
+        $params = [$data['namespace'], $data['article_id'], $data['clang_id'] ?? 1];
+        
+        if ($excludeId !== null) {
+            $query .= ' AND id != ?';
+            $params[] = $excludeId;
+        }
+        
+        $duplicateCheck->setQuery($query, $params);
+        if ($duplicateCheck->getRows() > 0) {
+            $this->validationErrors[] = 'A profile with this namespace already exists for the specified article and language';
             return false;
         }
 
@@ -375,6 +400,26 @@ class ProfileService extends \rex_sql
         } else {
             return (bool) $this->createProfile($data);
         }
+    }
+
+    /**
+     * Get validation errors.
+     *
+     * @return array
+     */
+    public function getValidationErrors(): array
+    {
+        return $this->validationErrors;
+    }
+
+    /**
+     * Get last validation error message.
+     *
+     * @return string|null
+     */
+    public function getLastValidationError(): ?string
+    {
+        return !empty($this->validationErrors) ? end($this->validationErrors) : null;
     }
 
 
