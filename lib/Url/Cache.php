@@ -87,8 +87,6 @@ class Cache
                                 case 'append_structure_categories':
                                 case 'append_user_paths':
                                 case 'sitemap_add':
-                                case 'sitemap_frequency':
-                                case 'sitemap_priority':
                                     $profiles[$id][$key] = $value;
                                     break;
                             }
