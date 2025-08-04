@@ -95,6 +95,16 @@ class Profile
     private $table;
     private $updatedate;
     private $updateuser;
+    
+    // Properties for fluent interface
+    private $table_name;
+    private $table_parameters;
+    private $relation_1_table_name;
+    private $relation_1_table_parameters;
+    private $relation_2_table_name;
+    private $relation_2_table_parameters;
+    private $relation_3_table_name;
+    private $relation_3_table_parameters;
 
     public function __construct()
     {
@@ -718,5 +728,221 @@ class Profile
     {
         self::$cacheLoaded = false;
         self::$profiles = [];
+    }
+
+    // Fluent interface methods
+
+    /**
+     * Creates a new Profile instance for fluent interface.
+     *
+     * @return static
+     */
+    public static function create(): static
+    {
+        return new static();
+    }
+
+    /**
+     * Sets the namespace and returns the instance for chaining.
+     *
+     * @param string $namespace
+     * @return static
+     */
+    public function setNamespace(string $namespace): static
+    {
+        $this->namespace = $namespace;
+        return $this;
+    }
+
+    /**
+     * Sets the article ID and returns the instance for chaining.
+     *
+     * @param int $articleId
+     * @return static
+     */
+    public function setArticleId(int $articleId): static
+    {
+        $this->article_id = $articleId;
+        return $this;
+    }
+
+    /**
+     * Sets the clang ID and returns the instance for chaining.
+     *
+     * @param int $clangId
+     * @return static
+     */
+    public function setClangId(int $clangId): static
+    {
+        $this->clang_id = $clangId;
+        return $this;
+    }
+
+    /**
+     * Sets the table name and returns the instance for chaining.
+     *
+     * @param string $tableName
+     * @return static
+     */
+    public function setTableName(string $tableName): static
+    {
+        $this->table_name = $tableName;
+        return $this;
+    }
+
+    /**
+     * Sets the table parameters and returns the instance for chaining.
+     *
+     * @param array $tableParameters
+     * @return static
+     */
+    public function setTableParameters(array $tableParameters): static
+    {
+        $this->table_parameters = $tableParameters;
+        return $this;
+    }
+
+    /**
+     * Sets the ep_pre_save_called flag and returns the instance for chaining.
+     *
+     * @param int $epPreSaveCalled
+     * @return static
+     */
+    public function setEpPreSaveCalled(int $epPreSaveCalled): static
+    {
+        $this->ep_pre_save_called = $epPreSaveCalled;
+        return $this;
+    }
+
+    /**
+     * Sets the relation 1 table name and returns the instance for chaining.
+     *
+     * @param string $tableName
+     * @return static
+     */
+    public function setRelation1TableName(string $tableName): static
+    {
+        $this->relation_1_table_name = $tableName;
+        return $this;
+    }
+
+    /**
+     * Sets the relation 1 table parameters and returns the instance for chaining.
+     *
+     * @param array $tableParameters
+     * @return static
+     */
+    public function setRelation1TableParameters(array $tableParameters): static
+    {
+        $this->relation_1_table_parameters = $tableParameters;
+        return $this;
+    }
+
+    /**
+     * Sets the relation 2 table name and returns the instance for chaining.
+     *
+     * @param string $tableName
+     * @return static
+     */
+    public function setRelation2TableName(string $tableName): static
+    {
+        $this->relation_2_table_name = $tableName;
+        return $this;
+    }
+
+    /**
+     * Sets the relation 2 table parameters and returns the instance for chaining.
+     *
+     * @param array $tableParameters
+     * @return static
+     */
+    public function setRelation2TableParameters(array $tableParameters): static
+    {
+        $this->relation_2_table_parameters = $tableParameters;
+        return $this;
+    }
+
+    /**
+     * Sets the relation 3 table name and returns the instance for chaining.
+     *
+     * @param string $tableName
+     * @return static
+     */
+    public function setRelation3TableName(string $tableName): static
+    {
+        $this->relation_3_table_name = $tableName;
+        return $this;
+    }
+
+    /**
+     * Sets the relation 3 table parameters and returns the instance for chaining.
+     *
+     * @param array $tableParameters
+     * @return static
+     */
+    public function setRelation3TableParameters(array $tableParameters): static
+    {
+        $this->relation_3_table_parameters = $tableParameters;
+        return $this;
+    }
+
+    /**
+     * Saves the profile using ProfileService.
+     *
+     * @return int|false The ID of the saved profile or false on error
+     */
+    public function save()
+    {
+        $profileService = new ProfileService();
+        
+        $data = [
+            'namespace' => $this->namespace,
+            'article_id' => $this->article_id,
+            'clang_id' => $this->clang_id ?? 1,
+            'table_name' => $this->table_name,
+            'table_parameters' => $this->table_parameters ?? [],
+            'ep_pre_save_called' => $this->ep_pre_save_called ?? 0,
+            'relation_1_table_name' => $this->relation_1_table_name ?? '',
+            'relation_1_table_parameters' => $this->relation_1_table_parameters ?? [],
+            'relation_2_table_name' => $this->relation_2_table_name ?? '',
+            'relation_2_table_parameters' => $this->relation_2_table_parameters ?? [],
+            'relation_3_table_name' => $this->relation_3_table_name ?? '',
+            'relation_3_table_parameters' => $this->relation_3_table_parameters ?? [],
+        ];
+
+        if ($this->id && $this->id > 0) {
+            // Update existing profile
+            $success = $profileService->updateProfile($this->id, $data);
+            return $success ? $this->id : false;
+        } else {
+            // Create new profile
+            $newId = $profileService->createProfile($data);
+            if ($newId) {
+                $this->id = $newId;
+            }
+            return $newId;
+        }
+    }
+
+    /**
+     * Gets the last validation error from ProfileService.
+     *
+     * @return string|null
+     */
+    public function getLastError(): ?string
+    {
+        $profileService = new ProfileService();
+        return $profileService->getLastValidationError();
+    }
+
+    /**
+     * Gets all validation errors from ProfileService.
+     *
+     * @return array
+     */
+    public function getErrors(): array
+    {
+        $profileService = new ProfileService();
+        return $profileService->getValidationErrors();
     }
 }
