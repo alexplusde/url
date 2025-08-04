@@ -92,8 +92,6 @@ class Profile
 
     private array $segment_part_separators = [];
     private $sitemap_add = false;
-    private $sitemap_frequency;
-    private $sitemap_priority;
     private $table;
     private $updatedate;
     private $updateuser;
@@ -237,16 +235,6 @@ class Profile
     public function inSitemap(): bool
     {
         return (bool) $this->sitemap_add;
-    }
-
-    public function getSitemapFrequency(): string|null
-    {
-        return $this->sitemap_frequency;
-    }
-
-    public function getSitemapPriority(): string|null
-    {
-        return $this->sitemap_priority;
     }
 
     public function getDatabaseId(): int
