@@ -45,22 +45,6 @@ class Yrewrite extends Rewriter
     }
 
     /**
-     * @return array
-     */
-    public function getSitemapFrequency(): array
-    {
-        return \rex_yrewrite_seo::$changefreq;
-    }
-
-    /**
-     * @return array
-     */
-    public function getSitemapPriority(): array
-    {
-        return \rex_yrewrite_seo::$priority;
-    }
-
-    /**
      * @return \rex_yrewrite_seo
      */
     public function getSeoInstance(): \rex_yrewrite_seo

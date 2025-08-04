@@ -2,7 +2,7 @@
 
 /*
 
-array:33 [▼
+array:31 [▼
     "column_id" => "id"
     "column_clang_id" => ""
     "restriction_1_column" => "status"
@@ -33,8 +33,6 @@ array:33 [▼
     "column_seo_description" => "short_text"
     "column_seo_image" => "image"
     "sitemap_add" => "1"
-    "sitemap_frequency" => "always"
-    "sitemap_priority" => "1.0"
     "column_sitemap_lastmod" => "updatedate"
 ]
     */
