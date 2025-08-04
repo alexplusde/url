@@ -182,7 +182,7 @@ if (null !== Url::getRewriter() && Url::getRewriter()->getSeoTagsExtensionPoint(
                 if ($profile) {
                     $urls = $profile->getGenerator()->getUrls(); // Liefert ein Array mit allen URLs für das Profil
                     rex_response::cleanOutputBuffers();
-                    header('Content-Type: application/xml');
+                    rex_response::setHeader('Content-Type', 'application/xml');
                     echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
                     echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
                     foreach ($urls as $url) {
