@@ -286,7 +286,7 @@ if ($tableParameters['column_sitemap_lastmod'] !== '') {
         }).catch(function(err) {
             // Error feedback
             console.error('Copy failed:', err);
-            var feedback = $('<span class="url-copy-feedback" style="background: #dc3545;">Fehler beim Kopieren</span>');
+            var feedback = $('<span class="url-copy-feedback url-copy-feedback-error">Fehler beim Kopieren</span>');
             $this.css('position', 'relative').append(feedback);
             
             setTimeout(function() {
