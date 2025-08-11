@@ -50,7 +50,7 @@ if ($total > 0) {
 }
 
 $is_yform_table = false;
-if (rex_yform_manager_table::get($tableName)) {
+if (class_exists('rex_yform_manager_table') && rex_yform_manager_table::get($tableName)) {
     $is_yform_table = true;
     // Link zur YForm-Tabelle
     $backend_page = rex_url::backendPage('yform/manager/data_edit', [
@@ -130,11 +130,22 @@ echo rex_i18n::msg('url.profile.segments')  . ':' . $url_segments;
 					<i class="rex-icon fa-list"></i>
 					<?php echo rex_i18n::msg('url_generator_profiles_yform_data'); ?>
 				</a>
+
+				
 				<?php
+				// Display YForm model class if available
+				if ($is_yform_table && class_exists('rex_yform_manager_dataset') && is_callable(['rex_yform_manager_dataset', 'getModelClass'])) {
+					$modelClass = rex_yform_manager_dataset::getModelClass($tableName);
+					if ($modelClass) {
+						echo '<br><small>' . makeLabel('Model: ' . $modelClass, 'info', 'fa-code') . '</small>';
+					} else {
+						echo '<br><small>' . makeLabel('Model: ' . rex_i18n::msg('url.profile.not_set'), 'default', 'fa-times') . '</small>';
+	
 				// Display dataset identification field only if it's not the default 'id'
 				$columnId = $tableParameters['column_id'] ?? 'id';
 				if ($columnId !== 'id') {
 					echo '<br><small class="text-muted">' . rex_i18n::msg('url_generator_identify_record') . ': <code>' . htmlspecialchars($columnId) . '</code></small>';
+
 				}
 				?>
 				<!-- Relationen -->
