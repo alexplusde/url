@@ -133,7 +133,7 @@ echo rex_i18n::msg('url.profile.segments')  . ':' . $url_segments;
 				
 				<?php
 				// Display YForm model class if available
-				if ($is_yform_table && class_exists('rex_yform_manager_dataset') && method_exists('rex_yform_manager_dataset', 'getModelClass')) {
+				if ($is_yform_table && class_exists('rex_yform_manager_dataset') && is_callable(['rex_yform_manager_dataset', 'getModelClass'])) {
 					$modelClass = rex_yform_manager_dataset::getModelClass($tableName);
 					if ($modelClass) {
 						echo '<br><small>' . makeLabel('Model: ' . htmlspecialchars($modelClass), 'info', 'fa-code') . '</small>';
