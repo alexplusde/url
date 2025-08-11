@@ -136,7 +136,7 @@ echo rex_i18n::msg('url.profile.segments')  . ':' . $url_segments;
 				if ($is_yform_table && class_exists('rex_yform_manager_dataset') && is_callable(['rex_yform_manager_dataset', 'getModelClass'])) {
 					$modelClass = rex_yform_manager_dataset::getModelClass($tableName);
 					if ($modelClass) {
-						echo '<br><small>' . makeLabel('Model: ' . htmlspecialchars($modelClass), 'info', 'fa-code') . '</small>';
+						echo '<br><small>' . makeLabel('Model: ' . $modelClass, 'info', 'fa-code') . '</small>';
 					} else {
 						echo '<br><small>' . makeLabel('Model: ' . rex_i18n::msg('url.profile.not_set'), 'default', 'fa-times') . '</small>';
 					}
