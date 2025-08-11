@@ -24,16 +24,6 @@ abstract class Rewriter
     abstract public function getSitemapExtensionPoint(): string;
 
     /**
-     * @return array
-     */
-    abstract public function getSitemapFrequency(): array;
-
-    /**
-     * @return array
-     */
-    abstract public function getSitemapPriority(): array;
-
-    /**
      * @return object
      */
     abstract public function getSeoInstance(): object;

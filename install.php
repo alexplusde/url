@@ -70,3 +70,18 @@ $indexes = $sql->getArray('SHOW INDEX FROM `rex_url_generator_url` WHERE Key_nam
 if (count($indexes) === 0) {
     $sql->setQuery('ALTER TABLE `rex_url_generator_url` ADD INDEX `url` (`url`(255))');
 }
+
+// Migration: Remove deprecated sitemap frequency and priority fields from existing profiles
+$profiles = $sql->getArray('SELECT id, table_parameters FROM '.\rex::getTable('url_generator_profile'));
+foreach ($profiles as $profile) {
+    $params = json_decode($profile['table_parameters'], true);
+    if ($params && (isset($params['sitemap_frequency']) || isset($params['sitemap_priority']))) {
+        unset($params['sitemap_frequency'], $params['sitemap_priority']);
+        $updatedParams = json_encode($params);
+        $updateSql = \rex_sql::factory();
+        $updateSql->setTable(\rex::getTable('url_generator_profile'));
+        $updateSql->setWhere('id = :id', ['id' => $profile['id']]);
+        $updateSql->setValue('table_parameters', $updatedParams);
+        $updateSql->update();
+    }
+}

@@ -2,7 +2,7 @@
 
 /*
 
-array:33 [▼
+array:31 [▼
     "column_id" => "id"
     "column_clang_id" => ""
     "restriction_1_column" => "status"
@@ -33,8 +33,6 @@ array:33 [▼
     "column_seo_description" => "short_text"
     "column_seo_image" => "image"
     "sitemap_add" => "1"
-    "sitemap_frequency" => "always"
-    "sitemap_priority" => "1.0"
     "column_sitemap_lastmod" => "updatedate"
 ]
     */
@@ -79,8 +77,6 @@ class ProfileServiceTableParameters
     private $columnSeoDescription = 'short_text';
     private $columnSeoImage = 'image';
     private $sitemapAdd = '1';
-    private $sitemapFrequency = 'always';
-    private $sitemapPriority = '1.0';
     private $columnSitemapLastmod = 'updatedate';
 
     /**
@@ -121,8 +117,6 @@ class ProfileServiceTableParameters
             'column_seo_description' => $this->columnSeoDescription,
             'column_seo_image' => $this->columnSeoImage,
             'sitemap_add' => $this->sitemapAdd,
-            'sitemap_frequency' => $this->sitemapFrequency,
-            'sitemap_priority' => $this->sitemapPriority,
             'column_sitemap_lastmod' => $this->columnSitemapLastmod,
         ];
     }
@@ -445,26 +439,6 @@ class ProfileServiceTableParameters
     public function getSitemapAdd(): string
     {
         return $this->sitemapAdd;
-    }
-
-    public function setSitemapFrequency(string $sitemap_frequency): void
-    {
-        $this->sitemapFrequency = $sitemap_frequency;
-    }
-
-    public function getSitemapFrequency(): string
-    {
-        return $this->sitemapFrequency;
-    }
-
-    public function setSitemapPriority(string $sitemap_priority): void
-    {
-        $this->sitemapPriority = $sitemap_priority;
-    }
-
-    public function getSitemapPriority(): string
-    {
-        return $this->sitemapPriority;
     }
 
     public function setColumnSitemapLastmod(string $column_sitemap_lastmod): void

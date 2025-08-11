@@ -1,12 +1,12 @@
-# Url Add-on für REDAXO 5
+# Url Add-on für REDAXO 5 (Fork)
 
 > Fork von <https://github.com/tbaddade/redaxo_url/> mit dem Ziel, das Add-on kontinuierlich zu verbessern und Fehler schnell zu beheben und zu releasen.
 
-☑️ verbesserte Benutzeroberfläche
-☑️ viele Bugfixes
-☑️ neue Features 
-☑️ Verbesserungen bei der Code-Qualität (statische Codeanalyse) 
-
+* ☑️ verbesserte Benutzeroberfläche
+* ☑️ viele Bugfixes
+* ☑️ neue Features 
+* ☑️ Verbesserungen bei der Code-Qualität (statische Codeanalyse)
+* 
 ## Beschreibung
 
 REDAXO 5 Add-on, um aus Datensätzen in Tabellen SEO-freundliche URLs zu generieren.

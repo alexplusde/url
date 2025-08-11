@@ -130,6 +130,7 @@ echo rex_i18n::msg('url.profile.segments')  . ':' . $url_segments;
 					<i class="rex-icon fa-list"></i>
 					<?php echo rex_i18n::msg('url_generator_profiles_yform_data'); ?>
 				</a>
+
 				
 				<?php
 				// Display YForm model class if available
@@ -139,7 +140,12 @@ echo rex_i18n::msg('url.profile.segments')  . ':' . $url_segments;
 						echo '<br><small>' . makeLabel('Model: ' . $modelClass, 'info', 'fa-code') . '</small>';
 					} else {
 						echo '<br><small>' . makeLabel('Model: ' . rex_i18n::msg('url.profile.not_set'), 'default', 'fa-times') . '</small>';
-					}
+	
+				// Display dataset identification field only if it's not the default 'id'
+				$columnId = $tableParameters['column_id'] ?? 'id';
+				if ($columnId !== 'id') {
+					echo '<br><small class="text-muted">' . rex_i18n::msg('url_generator_identify_record') . ': <code>' . htmlspecialchars($columnId) . '</code></small>';
+
 				}
 				?>
 				<!-- Relationen -->

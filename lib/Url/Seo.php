@@ -196,8 +196,6 @@ class Seo
                     "\n\t".'<loc>'.$url->getSchemeAndHttpHost().urldecode($url->getPath()).'</loc>'.
                     "\n\t".'<lastmod>'.$profileUrl->getLastmod().'</lastmod>'.
                     $sitemapImage.
-                    "\n\t".'<changefreq>'.$profile->getSitemapFrequency().'</changefreq>'.
-                    "\n\t".'<priority>'.$profile->getSitemapPriority().'</priority>'.
                     "\n".'</url>';
             }
         }
