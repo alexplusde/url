@@ -17,6 +17,8 @@ use rex_yform_manager_dataset;
 class Profile
 {
     const TABLE_NAME = 'url_generator_profile';
+    public $sitemap_frequency = 0;
+    public $sitemap_priority = 0;
 
     /**
      * Number of possible relations.
