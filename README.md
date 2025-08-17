@@ -6,7 +6,8 @@
 * ☑️ viele Bugfixes
 * ☑️ neue Features 
 * ☑️ Verbesserungen bei der Code-Qualität (statische Codeanalyse)
-* 
+* ☑️ Umfangreiche Dokumentation mit konkreten, praxis-getesteten Beispielen
+
 ## Beschreibung
 
 REDAXO 5 Add-on, um aus Datensätzen in Tabellen SEO-freundliche URLs zu generieren.
@@ -377,42 +378,50 @@ $seo = new rex_yrewrite_seo();
 echo $seo->getTags();
 ```
 
-Eine Anpassung der einzelnen Tags kann über den Extension Point `URL_SEO_TAGS` erreicht werden.
+Eine Anpassung der einzelnen Tags kann über den Extension Point `URL_SEO_TAGS`, z. B. in der `boot.php` erreicht werden.
 
 ```php
 use Url\Seo;
 use Url\Url;
 
-$seo = new Seo();
-$manager = Url::resolveCurrent();
-if ($manager) {
-    \rex_extension::register('URL_SEO_TAGS', function(\rex_extension_point $ep) use ($manager) {
-        $tags = $ep->getSubject();
+// Nur dann, wenn alle Add-ons initialisiert sind, sonst Whooops
+rex_extension::register('PACKAGES_INCLUDED', function () {
 
-        $titleValues = [];
-        $article = rex_article::get($manager->getArticleId());
-        $title = strip_tags($tags['title']);
+    if (rex_addon::get('url')->isAvailable()) {
+        
+        $manager = Url::resolveCurrent();
+        if ($manager) {
+            \rex_extension::register('URL_SEO_TAGS', function(\rex_extension_point $ep) use ($manager) {
+                $tags = $ep->getSubject();
 
-        if ($manager->getSeoTitle()) {
-            $titleValues[] = $manager->getSeoTitle();
-        }
-        if ($article) {
-            $domain = rex_yrewrite::getDomainByArticleId($article->getId());
-            $title = $domain->getTitle();
-            $titleValues[] = $article->getName();
-        }
-        if (count($titleValues)) {
-            $title = rex_escape(str_replace('%T', implode(' / ', $titleValues), $title));
-        }
-        if ('' !== rex::getServerName()) {
-            $title = rex_escape(str_replace('%SN', rex::getServerName(), $title));
-        }
+                $titleValues = [];
+                $article = rex_article::get($manager->getArticleId());
+                $title = strip_tags($tags['title']);
 
-        $tags['title'] = sprintf('<title>%s</title>', $title);
-        $ep->setSubject($tags);
-    });
-}
-$tags = $seo->getTags();
+                if ($manager->getSeoTitle()) {
+                    $titleValues[] = $manager->getSeoTitle();
+                }
+                if ($article) {
+                    $domain = rex_yrewrite::getDomainByArticleId($article->getId());
+                    $title = $domain->getTitle();
+                    $titleValues[] = $article->getName();
+                }
+                if (count($titleValues)) {
+                    $title = "abc" . rex_escape(str_replace('%T', implode(' / ', $titleValues), $title));
+                }
+                if ('' !== rex::getServerName()) {
+                    $title = "xyz" . rex_escape(str_replace('%SN', rex::getServerName(), $title));
+                }
+
+                $tags['title'] = sprintf('<title>%s</title>', $title);
+                $ep->setSubject($tags);
+            });
+        }
+    }
+});
+
+// Ausgabe im Template
+// $tags = $seo->getTags();
 ```
 
 ## Weitere Tipps
