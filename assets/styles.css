@@ -241,3 +241,40 @@
 .addon-url-data-table .label-default {
     background: #ccc;
 }
+
+/* Copy-to-clipboard code elements */
+.url-copy-code {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.url-copy-code:hover {
+    background-color: #e6f3ff !important;
+    color: #0066cc !important;
+    border-left: 3px solid #0066cc;
+    padding-left: 5px !important;
+}
+
+.url-copy-code.copied {
+    background-color: #d4edda !important;
+    color: #155724 !important;
+    border-left: 3px solid #28a745;
+    padding-left: 5px !important;
+}
+
+.url-copy-feedback {
+    position: absolute;
+    background: #28a745;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
