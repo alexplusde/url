@@ -14,6 +14,7 @@ namespace Url;
 use Riimu\Kit\UrlParser\Uri;
 use Riimu\Kit\UrlParser\UriParser;
 use Url\Rewriter\Rewriter;
+use Url\Rewriter\Yrewrite;
 
 class Url
 {
@@ -105,7 +106,7 @@ class Url
 
     public function withSolvedScheme(): self
     {
-        return $this->withScheme(self::getRewriter()->getSchemeByDomain($this->getDomain()) ?: (self::getRewriter()->isHttps() ? 'https' : 'http'));
+        return $this->withScheme(self::getRewriter()?->getSchemeByDomain($this->getDomain()) ?: (self::getRewriter()->isHttps() ? 'https' : 'http'));
     }
 
     /**
@@ -317,7 +318,7 @@ class Url
     protected function removeRewriterSuffix(): self
     {
         $path = $this->uri->getPath();
-        $suffix = self::$rewriter->getSuffix();
+        $suffix = self::$rewriter?->getSuffix() ?? '';
         if (strlen($suffix) !== 0 && substr($path, (strlen($suffix) * -1)) == $suffix) {
             $path = substr($path, 0, (strlen($suffix) * -1));
         }
