@@ -132,6 +132,9 @@ url.profile.seo_description = Beschreibung
 url.profile.seo_image = Bild
 url.profile.sitemap-lastmod = Letzte Änderung
 url.profile.not_set = keine Auswahl
+
+url_click_to_copy = Klicken zum Kopieren
+
 // Neue Update-Seite
 
 url_generator_update = Neue Version verfügbar

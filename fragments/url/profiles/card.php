@@ -96,9 +96,9 @@ echo rex_i18n::msg('url.profile.segments')  . ':' . $url_segments;
 ?>
 				<p class="help-block rex-note" style="font-size: 0.8em;">
 					Aufruf via
-					<code class="url-code-copy" data-copy="rex_getUrl('', '', ['<?= htmlspecialchars($profile['namespace'] ?? '') ?>' => {id}])" title="Klicken zum Kopieren"><i class="rex-icon fa-copy"></i> rex_getUrl('', '', ['<?= htmlspecialchars($profile['namespace'] ?? '') ?>' => {id}])</code>
+					<code class="url-code-copy" data-copy="rex_getUrl('', '', ['<?= htmlspecialchars($profile['namespace'] ?? '') ?>' => {id}])" title="<?= rex_i18n::msg('url_click_to_copy') ?>" tabindex="0"><i class="rex-icon fa-copy"></i> rex_getUrl('', '', ['<?= htmlspecialchars($profile['namespace'] ?? '') ?>' => {id}])</code>
 					oder via Artikel
-					<code class="url-code-copy" data-copy="rex_article::get(<?= $article->getId() ?>)->getUrl(['<?= htmlspecialchars($profile['namespace'] ?? '') ?>' => {id}])" title="Klicken zum Kopieren"><i class="rex-icon fa-copy"></i> rex_article::get(<?= $article->getId() ?>)->getUrl(['<?= htmlspecialchars($profile['namespace'] ?? '') ?>' => {id}])</code><br>
+					<code class="url-code-copy" data-copy="rex_article::get(<?= $article->getId() ?>)->getUrl(['<?= htmlspecialchars($profile['namespace'] ?? '') ?>' => {id}])" title="<?= rex_i18n::msg('url_click_to_copy') ?>" tabindex="0"><i class="rex-icon fa-copy"></i> rex_article::get(<?= $article->getId() ?>)->getUrl(['<?= htmlspecialchars($profile['namespace'] ?? '') ?>' => {id}])</code><br>
 
 
 				</p>

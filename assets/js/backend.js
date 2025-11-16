@@ -26,7 +26,14 @@
             }
         });
         
-        // Add cursor pointer style to copyable code elements
+        // Add keyboard accessibility (Enter or Space to trigger copy)
+        $('.url-code-copy').on('keydown', function(e) {
+            // Enter key (13) or Space key (32)
+            if (e.keyCode === 13 || e.keyCode === 32) {
+                e.preventDefault();
+                $(this).trigger('click');
+            }
+        });
     });
     
     /**
