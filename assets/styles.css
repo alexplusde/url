@@ -255,6 +255,11 @@
     background-color: rgba(0, 123, 255, 0.1);
 }
 
+.url-code-copy:focus {
+    outline: 2px solid rgba(0, 123, 255, 0.5);
+    outline-offset: 2px;
+}
+
 .url-code-copy.url-copied {
     background-color: rgba(40, 167, 69, 0.2);
 }
