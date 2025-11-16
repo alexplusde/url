@@ -49,17 +49,20 @@ class Generator
                 $profiles = Profile::getByTableName($this->manager->getDatasetTableName());
                 if (count($profiles) > 0) {
                     foreach ($profiles as $profile) {
-                        // Get old URLs before deletion to create redirects
-                        $oldUrls = UrlManagerSql::getOriginUrls($profile->getId(), $this->manager->getDatasetPrimaryId());
+                        // Get old URLs before deletion to create redirects (only in edit mode)
+                        $oldUrls = [];
+                        if ($this->manager->isDatasetEditMode()) {
+                            $oldUrls = UrlManagerSql::getOriginUrls($profile->getId(), $this->manager->getDatasetPrimaryId());
+                        }
                         
                         $profile->deleteUrlsByDatasetId($this->manager->getDatasetPrimaryId());
                         $profile->buildUrlsByDatasetId($this->manager->getDatasetPrimaryId());
                         
-                        // Get new URLs after building
-                        $newUrls = UrlManagerSql::getOriginUrls($profile->getId(), $this->manager->getDatasetPrimaryId());
-                        
-                        // Create redirects from old to new URLs
-                        self::createRedirectsForUrlChanges($oldUrls, $newUrls);
+                        // Create redirects from old to new URLs (only if we had old URLs)
+                        if (!empty($oldUrls)) {
+                            $newUrls = UrlManagerSql::getOriginUrls($profile->getId(), $this->manager->getDatasetPrimaryId());
+                            self::createRedirectsForUrlChanges($oldUrls, $newUrls);
+                        }
                     }
                 }
                 break;
