@@ -314,9 +314,9 @@ class Url
         $path = $this->uri->getPath();
         $lastSegment = basename($path);
         
-        // If the last segment contains a dot and has a file extension (2-4 characters after the dot),
+        // If the last segment contains a file extension (including multi-part or long extensions, e.g. ".tar.gz", ".jsonld", ".properties"),
         // don't append the rewriter suffix (trailing slash)
-        if (preg_match('/\.[a-zA-Z0-9]{2,4}$/', $lastSegment)) {
+        if (preg_match('/(\.[a-zA-Z0-9]+)+$/', $lastSegment)) {
             return $this->uri;
         }
         
