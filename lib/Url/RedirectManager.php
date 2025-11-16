@@ -100,6 +100,7 @@ class RedirectManager
             self::clearYrewriteCache();
             return true;
         } catch (\rex_sql_exception $e) {
+            \rex_logger::logException($e);
             return false;
         }
     }
