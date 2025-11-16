@@ -282,6 +282,22 @@ class UrlManagerSql
     }
 
     /**
+     * Get all URLs for a specific profile and dataset (across all languages)
+     *
+     * @param int $profileId
+     * @param int $datasetId
+     *
+     * @throws \rex_sql_exception
+     *
+     * @return array
+     */
+    public static function getOriginUrls(int $profileId, int $datasetId): array
+    {
+        $sql = self::factory();
+        return $sql->sql->getArray('SELECT * FROM '.\rex::getTable(self::TABLE_NAME).' WHERE `profile_id` = ? AND `data_id` = ?', [$profileId, $datasetId]);
+    }
+
+    /**
      * @param Url $url
      *
      * @throws \rex_sql_exception

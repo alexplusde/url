@@ -135,3 +135,8 @@ url.profile.not_set = keine Auswahl
 // Neue Update-Seite
 
 url_generator_update = Neue Version verfügbar
+
+# Redirect management
+url_generator_redirect_source = Quelle
+url_generator_redirect_from_url_addon = URL-AddOn
+url_generator_redirect_manual = Manuell

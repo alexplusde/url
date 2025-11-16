@@ -85,3 +85,12 @@ foreach ($profiles as $profile) {
         $updateSql->update();
     }
 }
+
+// Add is_url_addon column to yrewrite_redirect table if it doesn't exist
+if (\rex_addon::get('yrewrite')->isAvailable()) {
+    \rex_sql_table::get(
+        \rex::getTable('yrewrite_redirect')
+    )
+        ->ensureColumn(new \rex_sql_column('is_url_addon', 'TINYINT(1)', false, '0'))
+        ->ensure();
+}
