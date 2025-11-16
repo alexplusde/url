@@ -241,3 +241,22 @@
 .addon-url-data-table .label-default {
     background: #ccc;
 }
+
+/* Click-to-copy URL snippets */
+.url-copyable {
+    cursor: pointer !important;
+    transition: background-color 0.2s ease;
+    padding: 2px 6px;
+    border-radius: 3px;
+}
+
+.url-copyable:hover {
+    background-color: rgba(59, 181, 148, 0.1);
+    border-color: #3bb594;
+}
+
+.url-copyable.url-copied {
+    background-color: rgba(59, 181, 148, 0.2);
+    color: #3bb594;
+}
+

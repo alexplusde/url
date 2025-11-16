@@ -96,9 +96,9 @@ echo rex_i18n::msg('url.profile.segments')  . ':' . $url_segments;
 ?>
 				<p class="help-block rex-note" style="font-size: 0.8em;">
 					Aufruf via
-					<code>rex_getUrl('', '', ['<?= htmlspecialchars($profile['namespace'] ?? '') ?>' => {id}])</code>
+					<code class="url-copyable" data-copy-text="rex_getUrl('', '', ['<?= htmlspecialchars($profile['namespace'] ?? '') ?>' => {id}])" title="Klicken zum Kopieren">rex_getUrl('', '', ['<?= htmlspecialchars($profile['namespace'] ?? '') ?>' => {id}])</code>
 					oder via Artikel
-					<code>rex_article::get(<?= $article->getId() ?>)->getUrl(['<?= htmlspecialchars($profile['namespace'] ?? '') ?>' => {id}])</code><br>
+					<code class="url-copyable" data-copy-text="rex_article::get(<?= $article->getId() ?>)->getUrl(['<?= htmlspecialchars($profile['namespace'] ?? '') ?>' => {id}])" title="Klicken zum Kopieren">rex_article::get(<?= $article->getId() ?>)->getUrl(['<?= htmlspecialchars($profile['namespace'] ?? '') ?>' => {id}])</code><br>
 
 
 				</p>
