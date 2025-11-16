@@ -52,7 +52,6 @@
      * Show visual feedback when text is copied
      */
     function showCopyFeedback($element) {
-        var originalHtml = $element.html();
         var $icon = $element.find('.rex-icon');
         
         // Change icon to checkmark temporarily
