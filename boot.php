@@ -108,7 +108,7 @@ if (rex::isBackend() && rex::getUser() !== null) {
             $list->setColumnFormat('url_addon_source', 'custom', function ($params) {
                 $list = $params['list'];
                 $isUrlAddon = $list->getValue('is_url_addon');
-                if ($isUrlAddon == 1) {
+                if ($isUrlAddon === 1) {
                     return '<span class="label label-info">' . rex_i18n::msg('url_generator_redirect_from_url_addon') . '</span>';
                 }
                 return '<span class="label label-default">' . rex_i18n::msg('url_generator_redirect_manual') . '</span>';

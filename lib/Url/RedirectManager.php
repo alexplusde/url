@@ -18,12 +18,17 @@ class RedirectManager
      *
      * @param string $sourceUrl The old URL to redirect from
      * @param string $targetUrl The new URL to redirect to
-     * @param int $domainId The yrewrite domain ID
+     * @param int $domainId The yrewrite domain ID (required, no default)
      * @return bool True if redirect was created successfully
      */
     public static function createRedirect(string $sourceUrl, string $targetUrl, int $domainId): bool
     {
         if (!\rex_addon::get('yrewrite')->isAvailable()) {
+            return false;
+        }
+
+        // Validate URLs are non-empty
+        if (empty($sourceUrl) || empty($targetUrl)) {
             return false;
         }
 
@@ -56,6 +61,7 @@ class RedirectManager
                 self::clearYrewriteCache();
                 return true;
             } catch (\rex_sql_exception $e) {
+                \rex_logger::logException($e);
                 return false;
             }
         }
@@ -75,6 +81,7 @@ class RedirectManager
             self::clearYrewriteCache();
             return true;
         } catch (\rex_sql_exception $e) {
+            \rex_logger::logException($e);
             return false;
         }
     }

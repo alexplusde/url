@@ -128,14 +128,14 @@ class Generator
             $newOriginUrl = null;
 
             foreach ($oldClangUrls as $url) {
-                if ($url['is_user_path'] == 0 && $url['is_structure'] == 0) {
+                if ($url['is_user_path'] === 0 && $url['is_structure'] === 0) {
                     $oldOriginUrl = $url['url'];
                     break;
                 }
             }
 
             foreach ($newClangUrls as $url) {
-                if ($url['is_user_path'] == 0 && $url['is_structure'] == 0) {
+                if ($url['is_user_path'] === 0 && $url['is_structure'] === 0) {
                     $newOriginUrl = $url['url'];
                     break;
                 }
@@ -143,7 +143,10 @@ class Generator
 
             if ($oldOriginUrl && $newOriginUrl && $oldOriginUrl !== $newOriginUrl) {
                 // Get domain ID for the article
-                $articleId = $newClangUrls[0]['article_id'] ?? null;
+                $articleId = null;
+                if (!empty($newClangUrls)) {
+                    $articleId = $newClangUrls[0]['article_id'] ?? null;
+                }
                 $domainId = 1; // default
                 
                 if ($articleId && \rex_addon::get('yrewrite')->isAvailable()) {
