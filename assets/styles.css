@@ -241,3 +241,25 @@
 .addon-url-data-table .label-default {
     background: #ccc;
 }
+
+/* Click-to-copy styles */
+.url-code-copy {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    padding: 2px 8px;
+    border-radius: 3px;
+}
+
+.url-code-copy:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+.url-code-copy.url-copied {
+    background-color: rgba(40, 167, 69, 0.2);
+}
+
+.url-code-copy .rex-icon {
+    font-size: 0.9em;
+    margin-right: 4px;
+}
