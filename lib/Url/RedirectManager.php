@@ -21,7 +21,7 @@ class RedirectManager
      * @param int $domainId The yrewrite domain ID
      * @return bool True if redirect was created successfully
      */
-    public static function createRedirect(string $sourceUrl, string $targetUrl, int $domainId = 1): bool
+    public static function createRedirect(string $sourceUrl, string $targetUrl, int $domainId): bool
     {
         if (!\rex_addon::get('yrewrite')->isAvailable()) {
             return false;
