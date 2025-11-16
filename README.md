@@ -28,8 +28,8 @@ REDAXO 5 Add-on, um aus Datensätzen in Tabellen SEO-freundliche URLs zu generie
 
 ## Add-ons, die auf URL setzen
 
-* <https://github.com/FriendsOfREDAXO/neues>
-* <https://github.com/FriendsOfREDAXO/warehouse>
+* <https://github.com/alexplusde/neues>
+* <https://github.com/rotzek-it/rshop>
 * <https://github.com/alexplusde/events>
 * <https://github.com/alexplusde/staff>
 * <https://github.com/alexplusde/stellenangebote>
