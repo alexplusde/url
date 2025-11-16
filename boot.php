@@ -95,6 +95,26 @@ rex_extension::register('PACKAGES_INCLUDED', function (\rex_extension_point $epP
 
 if (rex::isBackend() && rex::getUser() !== null) {
     rex_view::addCssFile($addon->getAssetsUrl('styles.css'));
+    
+    // Extend YRewrite forward list to show redirect source
+    if (\rex_addon::get('yrewrite')->isAvailable()) {
+        rex_extension::register('YREWRITE_FORWARD_LIST', function (rex_extension_point $ep) {
+            /** @var rex_list $list */
+            $list = $ep->getSubject();
+            
+            // Add column to show if redirect was created by URL addon
+            $list->addColumn('url_addon_source', '<i class="rex-icon fa-link"></i>', count($list->getColumnNames()));
+            $list->setColumnLabel('url_addon_source', rex_i18n::msg('url_generator_redirect_source'));
+            $list->setColumnFormat('url_addon_source', 'custom', function ($params) {
+                $list = $params['list'];
+                $isUrlAddon = $list->getValue('is_url_addon');
+                if ($isUrlAddon === 1) {
+                    return '<span class="label label-info">' . rex_i18n::msg('url_generator_redirect_from_url_addon') . '</span>';
+                }
+                return '<span class="label label-default">' . rex_i18n::msg('url_generator_redirect_manual') . '</span>';
+            });
+        });
+    }
 }
 
 if (null !== Url::getRewriter() && Url::getRewriter()->getSeoTagsExtensionPoint() !== '') {

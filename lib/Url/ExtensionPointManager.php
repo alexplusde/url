@@ -89,6 +89,11 @@ class ExtensionPointManager
         return $this->structureClangId;
     }
 
+    public function isDatasetEditMode(): bool
+    {
+        return $this->dataEditMode ?? false;
+    }
+
     protected function normalize(): void
     {
         switch ($this->extensionPoint->getName()) {
