@@ -27,7 +27,6 @@
         });
         
         // Add cursor pointer style to copyable code elements
-        $('.url-code-copy').css('cursor', 'pointer');
     });
     
     /**
