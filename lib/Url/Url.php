@@ -316,7 +316,8 @@ class Url
         
         // If the last segment contains a file extension (including multi-part or long extensions, e.g. ".tar.gz", ".jsonld", ".properties"),
         // don't append the rewriter suffix (trailing slash)
-        if (preg_match('/(\.[a-zA-Z0-9]+)+$/', $lastSegment)) {
+        // Pattern requires at least one letter in each extension part to avoid matching purely numeric patterns like ".123"
+        if (preg_match('/(\.[a-zA-Z0-9]*[a-zA-Z][a-zA-Z0-9]*)+$/', $lastSegment)) {
             return $this->uri;
         }
         
