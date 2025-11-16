@@ -19,6 +19,8 @@ if (!function_exists('makeLabel')) {
     {
         if ($icon) {
             $value = '<i class="rex-icon ' . htmlspecialchars($icon) . '"></i> ' . htmlspecialchars($value);
+        } else {
+            $value = htmlspecialchars($value);
         }
         return '<span class="label label-' . htmlspecialchars($class) . '"> ' . $value . '</span>';
     }
@@ -138,6 +140,11 @@ echo rex_i18n::msg('url.profile.segments')  . ':' . $url_segments;
 					$modelClass = rex_yform_manager_dataset::getModelClass($tableName);
 					if ($modelClass) {
 						echo '<br><small>' . makeLabel('Model: ' . $modelClass, 'info', 'fa-code') . '</small>';
+						
+						// Check if model class has getUrl() method
+						if (method_exists($modelClass, 'getUrl')) {
+							echo ' ' . makeLabel('✅ getUrl()', 'success', null);
+						}
 					} else {
 						echo '<br><small>' . makeLabel('Model: ' . rex_i18n::msg('url.profile.not_set'), 'default', 'fa-times') . '</small>';
 					}
