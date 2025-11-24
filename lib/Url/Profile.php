@@ -437,7 +437,7 @@ class Profile
             }
 
             if (!$manager->save()) {
-                // $return[] = $urlAsString;
+                throw new \rex_exception('Failed to save generated URL: '.$urlAsString);
             }
         }
 

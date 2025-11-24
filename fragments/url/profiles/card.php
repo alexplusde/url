@@ -31,36 +31,36 @@ $article = rex_article::get($profile['article_id'] ?? 0, $profile['clang_id'] ??
 if ($article instanceof rex_article) {
     $article_frontend_url = $article->getUrl();
     $article_backend_url = rex_url::backendPage('content/edit', ['article_id' => $profile['article_id'], 'clang' => $profile['clang_id']]);
-}
-$clang = rex_clang::get($profile['clang_id'] ?? 0);
 
-$domain = rex_yrewrite::getDomainByArticleId($profile['article_id'] ?? 0, $profile['clang_id'] ?? 0);
-if ($domain) {
-    $domain = $domain->getUrl();
-} else {
-    $domain = rex::getServer();
-}
+    $clang = rex_clang::get($profile['clang_id'] ?? 0);
 
-$query = 'SELECT COUNT(*) AS total FROM ' . rex::getTable('url_generator_url') . ' WHERE id = :id';
-$params = ["id" => $profile['id'] ?? 0];
-$total = rex_sql::factory()->setQuery($query, $params);
-$total = $total->getValue('total') ?: 0;
-if ($total > 0) {
-    $total = ' (' . $total . ')';
-} else {
-    $total = '';
-}
+    $domain = rex_yrewrite::getDomainByArticleId($profile['article_id'] ?? 0, $profile['clang_id'] ?? 0);
+    if ($domain) {
+        $domain = $domain->getUrl();
+    } else {
+        $domain = rex::getServer();
+    }
 
-$is_yform_table = false;
-if (class_exists('rex_yform_manager_table') && rex_yform_manager_table::get($tableName)) {
-    $is_yform_table = true;
-    // Link zur YForm-Tabelle
-    $backend_page = rex_url::backendPage('yform/manager/data_edit', [
-        'table_name' => $tableName,
-    ], false);
-}
+    $query = 'SELECT COUNT(*) AS total FROM ' . rex::getTable('url_generator_url') . ' WHERE id = :id';
+    $params = ["id" => $profile['id'] ?? 0];
+    $total = rex_sql::factory()->setQuery($query, $params);
+    $total = $total->getValue('total') ?: 0;
+    if ($total > 0) {
+        $total = ' (' . $total . ')';
+    } else {
+        $total = '';
+    }
 
-?>
+    $is_yform_table = false;
+    if (class_exists('rex_yform_manager_table') && rex_yform_manager_table::get($tableName)) {
+        $is_yform_table = true;
+        // Link zur YForm-Tabelle
+        $backend_page = rex_url::backendPage('yform/manager/data_edit', [
+            'table_name' => $tableName,
+        ], false);
+    }
+
+    ?>
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<strong class="panel-title"><span
@@ -79,23 +79,23 @@ if (class_exists('rex_yform_manager_table') && rex_yform_manager_table::get($tab
 		<div class="row">
 			<div class="col-md-12">
 				<?php
-                $url_segments = '';
-if ($domain) {
-    $url_segments .= '<code>' . htmlspecialchars(trim($domain, '/')) . '</code> <code>' . htmlspecialchars(trim($article->getUrl(), '')) . '</code> ';
-}
-if (!empty($tableParameters['column_segment_part_1'])) {
-    $url_segments .= ' <code>' . htmlspecialchars($tableParameters['column_segment_part_1']) . '</code>';
-}
-if (!empty($tableParameters['column_segment_part_2'])) {
-    $url_segments .= ' <code>' . htmlspecialchars($tableParameters['column_segment_part_2_separator']) . '</code> <code>' . htmlspecialchars($tableParameters['column_segment_part_2'] ?? '') . '</code>';
-}
-if (!empty($tableParameters['column_segment_part_3'])) {
-    $url_segments .= ' <code>' . htmlspecialchars($tableParameters['column_segment_part_3_separator']) . '</code> <code>' . htmlspecialchars($tableParameters['column_segment_part_3'] ?? '') . '</code>';
-}
+                    $url_segments = '';
+    if ($domain) {
+        $url_segments .= '<code>' . htmlspecialchars(trim($domain, '/')) . '</code> <code>' . htmlspecialchars(trim($article->getUrl(), '')) . '</code> ';
+    }
+    if (!empty($tableParameters['column_segment_part_1'])) {
+        $url_segments .= ' <code>' . htmlspecialchars($tableParameters['column_segment_part_1']) . '</code>';
+    }
+    if (!empty($tableParameters['column_segment_part_2'])) {
+        $url_segments .= ' <code>' . htmlspecialchars($tableParameters['column_segment_part_2_separator']) . '</code> <code>' . htmlspecialchars($tableParameters['column_segment_part_2'] ?? '') . '</code>';
+    }
+    if (!empty($tableParameters['column_segment_part_3'])) {
+        $url_segments .= ' <code>' . htmlspecialchars($tableParameters['column_segment_part_3_separator']) . '</code> <code>' . htmlspecialchars($tableParameters['column_segment_part_3'] ?? '') . '</code>';
+    }
 
-echo rex_i18n::msg('url.profile.segments')  . ':' . $url_segments;
+    echo rex_i18n::msg('url.profile.segments')  . ':' . $url_segments;
 
-?>
+    ?>
 				<p class="help-block rex-note" style="font-size: 0.8em;">
 					Aufruf via
 					<code>rex_getUrl('', '', ['<?= htmlspecialchars($profile['namespace'] ?? '') ?>' => {id}])</code>
@@ -109,7 +109,7 @@ echo rex_i18n::msg('url.profile.segments')  . ':' . $url_segments;
 				<h5><i class="rex-icon rex-icon-article"></i>
 					<?= rex_i18n::msg('url_generator_profiles_article')  ?>
 					<?= ' (' . htmlspecialchars($clang->getName()) .
-        ')' ?>
+            ')' ?>
 
 				</h5>
 				<?= htmlspecialchars($article->getName()); ?>
@@ -133,88 +133,88 @@ echo rex_i18n::msg('url.profile.segments')  . ':' . $url_segments;
 					<?php echo rex_i18n::msg('url_generator_profiles_yform_data'); ?>
 				</a>
 
-				
-				<?php
-				// Display YForm model class if available
-				if ($is_yform_table && class_exists('rex_yform_manager_dataset') && is_callable(['rex_yform_manager_dataset', 'getModelClass'])) {
-					$modelClass = rex_yform_manager_dataset::getModelClass($tableName);
-					if ($modelClass) {
-						echo '<br><small>' . makeLabel('Model: ' . $modelClass, 'info', 'fa-code') . '</small>';
-						
-						// Check if model class has getUrl() method
-						if (method_exists($modelClass, 'getUrl')) {
-							echo ' ' . makeLabel('✅ getUrl()', 'success', null);
-						}
-					} else {
-						echo '<br><small>' . makeLabel('Model: ' . rex_i18n::msg('url.profile.not_set'), 'default', 'fa-times') . '</small>';
-					}
 
-				// Display dataset identification field only if it's not the default 'id'
-				$columnId = $tableParameters['column_id'] ?? 'id';
-				if ($columnId !== 'id') {
-					echo '<br><small class="text-muted">' . rex_i18n::msg('url_generator_identify_record') . ': <code>' . htmlspecialchars($columnId) . '</code></small>';
-				}
-				}
-				?>
+				<?php
+    // Display YForm model class if available
+    if ($is_yform_table && class_exists('rex_yform_manager_dataset') && is_callable(['rex_yform_manager_dataset', 'getModelClass'])) {
+        $modelClass = rex_yform_manager_dataset::getModelClass($tableName);
+        if ($modelClass) {
+            echo '<br><small>' . makeLabel('Model: ' . $modelClass, 'info', 'fa-code') . '</small>';
+
+            // Check if model class has getUrl() method
+            if (method_exists($modelClass, 'getUrl')) {
+                echo ' ' . makeLabel('✅ getUrl()', 'success', null);
+            }
+        } else {
+            echo '<br><small>' . makeLabel('Model: ' . rex_i18n::msg('url.profile.not_set'), 'default', 'fa-times') . '</small>';
+        }
+
+        // Display dataset identification field only if it's not the default 'id'
+        $columnId = $tableParameters['column_id'] ?? 'id';
+        if ($columnId !== 'id') {
+            echo '<br><small class="text-muted">' . rex_i18n::msg('url_generator_identify_record') . ': <code>' . htmlspecialchars($columnId) . '</code></small>';
+        }
+    }
+    ?>
 				<!-- Relationen -->
 				<h5><i class="rex-icon fa-project-diagram"></i>
 					<?= rex_i18n::msg('url_generator_profiles_relations')  ?>
 				</h5>
 				<?php
-if ($tableParameters['append_structure_categories'] === '1') {
-    echo makeLabel(rex_i18n::msg('url.profile.append_structure_categories'), 'success', 'fa-folder') . ' ';
-} else {
-    echo makeLabel(rex_i18n::msg('url.profile.append_structure_categories.none'), 'danger', 'fa-times') . ' ';
-}
+    if ($tableParameters['append_structure_categories'] === '1') {
+        echo makeLabel(rex_i18n::msg('url.profile.append_structure_categories'), 'success', 'fa-folder') . ' ';
+    } else {
+        echo makeLabel(rex_i18n::msg('url.profile.append_structure_categories.none'), 'danger', 'fa-times') . ' ';
+    }
 
-if ($tableParameters['append_user_paths'] === '1') {
-    echo makeLabel(rex_i18n::msg('url.profile.append_user_paths'), 'success', 'fa-user') . ' ';
-} else {
-    echo makeLabel(rex_i18n::msg('url.profile.append_user_paths.none'), 'danger', 'fa-times') . ' ';
-}
-?>
+    if ($tableParameters['append_user_paths'] === '1') {
+        echo makeLabel(rex_i18n::msg('url.profile.append_user_paths'), 'success', 'fa-user') . ' ';
+    } else {
+        echo makeLabel(rex_i18n::msg('url.profile.append_user_paths.none'), 'danger', 'fa-times') . ' ';
+    }
+    ?>
 			</div>
 			<div class="col-12 col-md-4">
 				<h5><i class="rex-icon fa-filter"></i> Filter</h5>
 
 				<?php
-if ($tableParameters['restriction_1_column'] !== '') {
-    $value = $tableParameters['restriction_1_column'] . ' ' . $tableParameters['restriction_1_comparison_operator'] . ' ' . $tableParameters['restriction_1_value'];
-    echo makeLabel($value, 'info', '') . ' ';
-}
-if ($tableParameters['restriction_2_column'] !== '') {
-    $value = $tableParameters['restriction_2_column'] . ' ' . $tableParameters['restriction_2_comparison_operator'] . ' ' . $tableParameters['restriction_2_value'];
-    echo makeLabel($value, 'info', '') . ' ';
-}
-if ($tableParameters['restriction_3_column'] !== '') {
-    $value = $tableParameters['restriction_3_column'] . ' ' . $tableParameters['restriction_3_comparison_operator'] . ' ' . $tableParameters['restriction_3_value'];
-    echo makeLabel($value, 'info', '') . ' ';
-}
-?>
+    if ($tableParameters['restriction_1_column'] !== '') {
+        $value = $tableParameters['restriction_1_column'] . ' ' . $tableParameters['restriction_1_comparison_operator'] . ' ' . $tableParameters['restriction_1_value'];
+        echo makeLabel($value, 'info', '') . ' ';
+    }
+    if ($tableParameters['restriction_2_column'] !== '') {
+        $value = $tableParameters['restriction_2_column'] . ' ' . $tableParameters['restriction_2_comparison_operator'] . ' ' . $tableParameters['restriction_2_value'];
+        echo makeLabel($value, 'info', '') . ' ';
+    }
+    if ($tableParameters['restriction_3_column'] !== '') {
+        $value = $tableParameters['restriction_3_column'] . ' ' . $tableParameters['restriction_3_comparison_operator'] . ' ' . $tableParameters['restriction_3_value'];
+        echo makeLabel($value, 'info', '') . ' ';
+    }
+    ?>
 				<h5><i class="rex-icon fa-google"></i> SEO-Einstellungen</h5>
 				<?= makeLabel("Sitemap", ($tableParameters['sitemap_add'] === 1) ? 'success' : 'danger', 'fa-sitemap') . ' '; ?>
 				<?php
-if ($tableParameters['column_seo_title'] !== '') {
-    echo makeLabel(rex_i18n::msg('url.profile.seo_title') . ': ' . htmlspecialchars($tableParameters['column_seo_title']), 'success', 'fa-tag') . ' ';
-} else {
-    echo makeLabel(rex_i18n::msg('url.profile.seo_title') . ': ' . rex_i18n::msg('url.profile.not_set'), 'danger', 'fa-times') . ' ';
-}
-if ($tableParameters['column_seo_description'] !== '') {
-    echo makeLabel(rex_i18n::msg('url.profile.seo_description') . ': ' . htmlspecialchars($tableParameters['column_seo_description']), 'success', 'fa-info-circle') . ' ';
-} else {
-    echo makeLabel(rex_i18n::msg('url.profile.seo_description') . ': ' . rex_i18n::msg('url.profile.not_set'), 'danger', 'fa-times') . ' ';
-}
-if ($tableParameters['column_seo_image'] !== '') {
-    echo makeLabel(rex_i18n::msg('url.profile.seo_image') . ': ' . htmlspecialchars($tableParameters['column_seo_image']), 'success', 'fa-image') . ' ';
-} else {
-    echo makeLabel(rex_i18n::msg('url.profile.seo_image') . ': ' . rex_i18n::msg('url.profile.not_set'), 'danger', 'fa-times') . ' ';
-}
-if ($tableParameters['column_sitemap_lastmod'] !== '') {
-    echo makeLabel(rex_i18n::msg('url.profile.sitemap-lastmod') . ': ' . htmlspecialchars($tableParameters['column_sitemap_lastmod']), 'success', 'fa-calendar') . ' ';
-} else {
-    echo makeLabel(rex_i18n::msg('url.profile.sitemap-lastmod') . ': ' . rex_i18n::msg('url.profile.not_set'), 'danger', 'fa-times') . ' ';
-}
-?>
+    if ($tableParameters['column_seo_title'] !== '') {
+        echo makeLabel(rex_i18n::msg('url.profile.seo_title') . ': ' . htmlspecialchars($tableParameters['column_seo_title']), 'success', 'fa-tag') . ' ';
+    } else {
+        echo makeLabel(rex_i18n::msg('url.profile.seo_title') . ': ' . rex_i18n::msg('url.profile.not_set'), 'danger', 'fa-times') . ' ';
+    }
+    if ($tableParameters['column_seo_description'] !== '') {
+        echo makeLabel(rex_i18n::msg('url.profile.seo_description') . ': ' . htmlspecialchars($tableParameters['column_seo_description']), 'success', 'fa-info-circle') . ' ';
+    } else {
+        echo makeLabel(rex_i18n::msg('url.profile.seo_description') . ': ' . rex_i18n::msg('url.profile.not_set'), 'danger', 'fa-times') . ' ';
+    }
+    if ($tableParameters['column_seo_image'] !== '') {
+        echo makeLabel(rex_i18n::msg('url.profile.seo_image') . ': ' . htmlspecialchars($tableParameters['column_seo_image']), 'success', 'fa-image') . ' ';
+    } else {
+        echo makeLabel(rex_i18n::msg('url.profile.seo_image') . ': ' . rex_i18n::msg('url.profile.not_set'), 'danger', 'fa-times') . ' ';
+    }
+    if ($tableParameters['column_sitemap_lastmod'] !== '') {
+        echo makeLabel(rex_i18n::msg('url.profile.sitemap-lastmod') . ': ' . htmlspecialchars($tableParameters['column_sitemap_lastmod']), 'success', 'fa-calendar') . ' ';
+    } else {
+        echo makeLabel(rex_i18n::msg('url.profile.sitemap-lastmod') . ': ' . rex_i18n::msg('url.profile.not_set'), 'danger', 'fa-times') . ' ';
+    }
+    ?>
 			</div>
 			<div class="col-12 col-md-2">
 				<h5><i class="rex-icon fa-globe"></i> Aktionen</h5>
@@ -235,3 +235,8 @@ if ($tableParameters['column_sitemap_lastmod'] !== '') {
 		</a>
 	</div>
 </div>
+<?php
+
+}
+
+?>

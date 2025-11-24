@@ -24,36 +24,44 @@ class Generator
 
     public function execute(): void
     {
-        switch ($this->manager->getMode()) {
-            case ExtensionPointManager::MODE_UPDATE_URL_ALL:
-                UrlManagerSql::deleteAll();
-                $profiles = Profile::getAll();
-                if (count($profiles) > 0) {
-                    foreach ($profiles as $profile) {
-                        $profile->buildUrls();
-                    }
-                }
-                break;
+        $sql = \rex_sql::factory();
+        UrlManagerSql::deferTableUpdated(true);
+        try {
+            $sql->transactional(function () {
+                switch ($this->manager->getMode()) {
+                    case ExtensionPointManager::MODE_UPDATE_URL_ALL:
+                        UrlManagerSql::deleteAll();
+                        $profiles = Profile::getAll();
+                        if (count($profiles) > 0) {
+                            foreach ($profiles as $profile) {
+                                $profile->buildUrls();
+                            }
+                        }
+                        break;
 
-            case ExtensionPointManager::MODE_UPDATE_URL_COLLECTION:
-                $profiles = Profile::getByArticleId($this->manager->getStructureArticleId(), $this->manager->getStructureClangId());
-                if (count($profiles) > 0) {
-                    foreach ($profiles as $profile) {
-                        $profile->deleteUrls();
-                        $profile->buildUrls();
-                    }
-                }
-                break;
+                    case ExtensionPointManager::MODE_UPDATE_URL_COLLECTION:
+                        $profiles = Profile::getByArticleId($this->manager->getStructureArticleId(), $this->manager->getStructureClangId());
+                        if (count($profiles) > 0) {
+                            foreach ($profiles as $profile) {
+                                $profile->deleteUrls();
+                                $profile->buildUrls();
+                            }
+                        }
+                        break;
 
-            case ExtensionPointManager::MODE_UPDATE_URL_DATASET:
-                $profiles = Profile::getByTableName($this->manager->getDatasetTableName());
-                if (count($profiles) > 0) {
-                    foreach ($profiles as $profile) {
-                        $profile->deleteUrlsByDatasetId($this->manager->getDatasetPrimaryId());
-                        $profile->buildUrlsByDatasetId($this->manager->getDatasetPrimaryId());
-                    }
+                    case ExtensionPointManager::MODE_UPDATE_URL_DATASET:
+                        $profiles = Profile::getByTableName($this->manager->getDatasetTableName());
+                        if (count($profiles) > 0) {
+                            foreach ($profiles as $profile) {
+                                $profile->deleteUrlsByDatasetId($this->manager->getDatasetPrimaryId());
+                                $profile->buildUrlsByDatasetId($this->manager->getDatasetPrimaryId());
+                            }
+                        }
+                        break;
                 }
-                break;
+            });
+        } finally {
+            UrlManagerSql::flushTableUpdated();
         }
     }
 

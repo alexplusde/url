@@ -52,25 +52,35 @@ if (($func === 'refresh' && $id > 0) || $func === 'refresh_all') {
     if (!rex_csrf_token::factory('url_profile_refresh')->isValid()) {
         $message = rex_view::error(rex_i18n::msg('csrf_token_invalid'));
     } else {
-        switch ($func) {
-            case 'refresh':
-                $profile = Profile::get($id);
-                if ($profile !== null) {
-                    $profile->deleteUrls();
-                    $profile->buildUrls();
-                    $message .= rex_view::success(rex_i18n::msg('url_generator_url_refreshed', $id));
+        $sql = rex_sql::factory();
+        // Defer URL_TABLE_UPDATED events during bulk ops
+        UrlManagerSql::deferTableUpdated(true);
+        try {
+            $sql->transactional(function () use ($func, $id, &$message) {
+                switch ($func) {
+                    case 'refresh':
+                        $profile = Profile::get($id);
+                        if ($profile !== null) {
+                            $profile->deleteUrls();
+                            $profile->buildUrls();
+                            $message .= rex_view::success(rex_i18n::msg('url_generator_url_refreshed', $id));
+                        }
+                        break;
+                    case 'refresh_all':
+                        UrlManagerSql::deleteAll();
+                        $profiles = Profile::getAll();
+                        if (count($profiles) > 0) {
+                            foreach ($profiles as $profile) {
+                                $profile->buildUrls();
+                                $message .= rex_view::success(rex_i18n::msg('url_generator_url_refreshed', $profile->getId()));
+                            }
+                        }
+                        break;
                 }
-                break;
-            case 'refresh_all':
-                UrlManagerSql::deleteAll();
-                $profiles = Profile::getAll();
-                if (count($profiles) > 0) {
-                    foreach ($profiles as $profile) {
-                        $profile->buildUrls();
-                        $message .= rex_view::success(rex_i18n::msg('url_generator_url_refreshed', $profile->getId()));
-                    }
-                }
-                break;
+            });
+        } finally {
+            // Fire one consolidated event after commit
+            UrlManagerSql::flushTableUpdated();
         }
     }
     $func = '';
@@ -85,31 +95,32 @@ if ($func === '') {
     echo $fragment->parse('url/profiles/cards.php');
 
 } elseif ($func === 'add' || $func === 'edit') {
-        $fragment = new rex_fragment();
-        $fragment->setVar('func', $func, false);
-        $fragment->setVar('id', $id, false);
-        $fragment->setVar('addon', $this, false);
-        echo $fragment->parse('url/profiles/form.php');
+    $fragment = new rex_fragment();
+    $fragment->setVar('func', $func, false);
+    $fragment->setVar('id', $id, false);
+    $fragment->setVar('addon', $this, false);
+    echo $fragment->parse('url/profiles/form.php');
 }
 
 if ($func === 'add' || $func === 'edit') {
     for ($i = 1; $i <= Profile::RELATION_COUNT; ++$i) {
         ?>
-    <script type="text/javascript">
-        (function($) {
-            var $currentShownRelationSection = $(".js-change-relation-<?= $i ?>-container");
-            $currentShownRelationSection.hide();
-            $(".js-change-relation-<?= $i ?>-select select").change(function(){
-                if ($(this).closest(".rex-form-container").is(":visible")) {
-                    if ($(this).val().length > 0) {
-                        $currentShownRelationSection.show();
-                    } else {
-                        $currentShownRelationSection.hide();
-                    }
-                }
-            }).change();
-        })(jQuery);
-    </script>
+<script type="text/javascript">
+	(function($) {
+		var $currentShownRelationSection = $(
+			".js-change-relation-<?= $i ?>-container");
+		$currentShownRelationSection.hide();
+		$(".js-change-relation-<?= $i ?>-select select").change(function() {
+			if ($(this).closest(".rex-form-container").is(":visible")) {
+				if ($(this).val().length > 0) {
+					$currentShownRelationSection.show();
+				} else {
+					$currentShownRelationSection.hide();
+				}
+			}
+		}).change();
+	})(jQuery);
+</script>
 <?php
     }
 }
