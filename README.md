@@ -459,9 +459,7 @@ Dazu kann man ein zusätzliches YForm-Feld anlegen der das Indexieren speichert.
 
 ## Lizenz
 
-MIT Lizenz, siehe [LICENSE.md](https://github.com/alexplusde/url/blob/main/LICENSE.md)  
-
-## Autoren
+Proprietär, siehe [LICENSE](LICENSE)  ## Autoren
 
 [Alexander Walther](https://github.com/alxndr-w)
 
