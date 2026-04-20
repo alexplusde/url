@@ -98,9 +98,11 @@ if ($article instanceof rex_article) {
     ?>
 				<p class="help-block rex-note" style="font-size: 0.8em;">
 					Aufruf via
-					<code>rex_getUrl('', '', ['<?= htmlspecialchars($profile['namespace'] ?? '') ?>' => {id}])</code>
+					<code class="url-code-copy" data-copy-target="url-copy-<?= $profile['id'] ?>-1" title="<?= rex_i18n::msg('url_click_to_copy') ?>" tabindex="0"><i class="rex-icon fa-copy"></i> rex_getUrl('', '', ['<?= rex_escape($profile['namespace'] ?? '') ?>' => {id}])</code>
+					<textarea id="url-copy-<?= $profile['id'] ?>-1" style="position: absolute; left: -9999px;" aria-hidden="true" tabindex="-1">rex_getUrl('', '', ['<?= rex_escape($profile['namespace'] ?? '') ?>' => {id}])</textarea>
 					oder via Artikel
-					<code>rex_article::get(<?= $article->getId() ?>)->getUrl(['<?= htmlspecialchars($profile['namespace'] ?? '') ?>' => {id}])</code><br>
+					<code class="url-code-copy" data-copy-target="url-copy-<?= $profile['id'] ?>-2" title="<?= rex_i18n::msg('url_click_to_copy') ?>" tabindex="0"><i class="rex-icon fa-copy"></i> rex_article::get(<?= $article->getId() ?>)->getUrl(['<?= rex_escape($profile['namespace'] ?? '') ?>' => {id}])</code><br>
+					<textarea id="url-copy-<?= $profile['id'] ?>-2" style="position: absolute; left: -9999px;" aria-hidden="true" tabindex="-1">rex_article::get(<?= $article->getId() ?>)->getUrl(['<?= rex_escape($profile['namespace'] ?? '') ?>' => {id}])</textarea>
 
 
 				</p>

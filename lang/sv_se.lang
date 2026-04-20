@@ -92,6 +92,8 @@ url_yform_value_profil = Profil
 url_yform_value_anchor = Ankar-text
 url_yform_value_description = Tillfog länk till frontend, som skapades av URL-Addon:et
 
+url_click_to_copy = Klicka för att kopiera
+
 
 
 
