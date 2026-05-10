@@ -64,7 +64,7 @@ if ($article instanceof rex_article) {
      * Builds a copy-friendly basis-module template for the given profile.
      *
      * The resulting snippet contains:
-     *  - the typical "if (manager !== null) { detail } else { list }" pattern
+     *  - the typical "if ($manager !== null) { detail } else { list }" pattern
      *  - dataset retrieval based on the YOrm Model class (when available) with all
      *    public getters of the model class pre-listed as sample output
      *  - a list/overview branch using the profile namespace via rex_getUrl()
