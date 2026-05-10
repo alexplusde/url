@@ -171,49 +171,29 @@ if ($article instanceof rex_article) {
                 ? "\n        <?php /* Verfügbare Getter der Model-Klasse " . $mainModel . " */ ?>\n" . $detailGetters . "\n"
                 : "        <h1><?= rex_escape(\$dataset->getValue('name')) ?></h1>\n";
 
-            // ---- Relation switch (only when the profile has relations) --------------------------
-            $relationSwitch = '';
+            // ---- Detail body --------------------------------------------------------------------
+            // Note: Url\Profile::getTableName() always returns the profile's main table, so we
+            // cannot reliably branch on the originating relation table here. If relations are
+            // configured we still emit a comment listing them so developers know they exist and
+            // can extend the module manually if their setup requires it.
+            $relationsComment = '';
             if ($hasRelations) {
-                $relationCases = '';
+                $relationsComment = "    // Hinweis: Dieses Profil verweist zusätzlich auf folgende Relationstabelle(n):\n";
                 foreach ($relations as $rel) {
-                    $relFetch = $rel['model'] !== null
-                        ? '        $dataset = ' . $rel['model'] . '::get($manager->getDatasetId());'
-                        : '        $dataset = rex_yform_manager_table::get(\'' . $rel['table'] . '\')->query()->findId($manager->getDatasetId());';
-                    $relGetters = $renderGetters($rel['model'], 'dataset');
-                    $relGettersBlock = $relGetters !== ''
-                        ? "\n            <?php /* Verfügbare Getter der Model-Klasse " . $rel['model'] . " */ ?>\n" . preg_replace('/^    /m', '            ', $relGetters) . "\n"
-                        : "            <h1><?= rex_escape(\$dataset->getValue('name')) ?></h1>\n";
-
-                    $relationCases .= "    } elseif (\$profile->getTableName() === '" . $rel['table'] . "') {\n"
-                        . "        // Datensatz stammt aus der Relationstabelle '" . $rel['table'] . "'\n"
-                        . $relFetch . "\n"
-                        . "        if (\$dataset) {\n"
-                        . "            ?>\n"
-                        . $relGettersBlock
-                        . "            <?php\n"
-                        . "        }\n";
+                    $relationsComment .= "    //   - " . $rel['table']
+                        . ($rel['model'] !== null ? ' (Model: ' . $rel['model'] . ')' : '')
+                        . "\n";
                 }
-
-                $relationSwitch = "    \$profile = \$manager->getProfile();\n\n"
-                    . "    // Prüfen, aus welcher Tabelle der Datensatz stammt (Haupt- oder Relationstabelle)\n"
-                    . "    if (\$profile->getTableName() === '" . $tableName . "') {\n"
-                    . "        // Datensatz stammt aus der Haupttabelle '" . $tableName . "'\n"
-                    . preg_replace('/^/m', '    ', $detailFetch) . "\n"
-                    . "        if (\$dataset) {\n"
-                    . "            ?>\n"
-                    . preg_replace('/^        /m', '            ', $detailGettersBlock)
-                    . "            <?php\n"
-                    . "        }\n"
-                    . $relationCases
-                    . "    }\n";
-            } else {
-                $relationSwitch = $detailFetch . "\n"
-                    . "    if (\$dataset) {\n"
-                    . "        ?>\n"
-                    . $detailGettersBlock
-                    . "        <?php\n"
-                    . "    }\n";
+                $relationsComment .= "    // Der aufgelöste Datensatz stammt immer aus der Haupttabelle '" . $tableName . "'.\n\n";
             }
+
+            $detailBody = $relationsComment
+                . $detailFetch . "\n"
+                . "    if (\$dataset) {\n"
+                . "        ?>\n"
+                . $detailGettersBlock
+                . "        <?php\n"
+                . "    }\n";
 
             // ---- List branch (overview) ---------------------------------------------------------
             $listFetch = $mainModel !== null
@@ -230,7 +210,7 @@ if ($article instanceof rex_article) {
                 . "\$manager = Url::resolveCurrent();\n\n"
                 . "if (\$manager !== null) {\n"
                 . "    // === Detailseite =====================================================\n"
-                . $relationSwitch
+                . $detailBody
                 . "} else {\n"
                 . "    // === Übersicht / Liste ==============================================\n"
                 . $listFetch . "\n"
