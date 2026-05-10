@@ -132,6 +132,12 @@ url.profile.seo_description = Beschreibung
 url.profile.seo_image = Bild
 url.profile.sitemap-lastmod = Letzte Änderung
 url.profile.not_set = keine Auswahl
+
+url_generator_profile_copy_template = Code kopieren
+url_generator_profile_copy_template_title = Kopierfähiges Basis-Modul
+url_generator_profile_copy_template_help = Vorgeneriertes Modul für dieses Profil. Es enthält die Detail- und Übersichts-Ausgabe (mit <code>if ($manager !== null)</code>) sowie – falls Relationen definiert sind – eine Abfrage der Quelltabelle. Code an deine Bedürfnisse anpassen.
+url_generator_profile_copy_template_button = In Zwischenablage kopieren
+url_generator_profile_copy_template_copied = Kopiert!
 // Neue Update-Seite
 
 url_generator_update = Neue Version verfügbar

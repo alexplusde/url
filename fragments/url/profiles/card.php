@@ -60,6 +60,185 @@ if ($article instanceof rex_article) {
         ], false);
     }
 
+    /**
+     * Builds a copy-friendly basis-module template for the given profile.
+     *
+     * The resulting snippet contains:
+     *  - the typical "if (manager !== null) { detail } else { list }" pattern
+     *  - dataset retrieval based on the YOrm Model class (when available) with all
+     *    public getters of the model class pre-listed as sample output
+     *  - a list/overview branch using the profile namespace via rex_getUrl()
+     *  - if the profile has relation tables, an additional getTableName() switch
+     *    that distinguishes records originating from the main table vs. relation tables.
+     *
+     * @param array $profile          Raw profile row from the database
+     * @param string $tableName       Plain main table name (without dbid prefix)
+     * @return string                 Generated PHP code as plain text
+     */
+    if (!function_exists('buildProfileTemplate')) {
+        function buildProfileTemplate(array $profile, string $tableName): string
+        {
+            $namespace = (string) ($profile['namespace'] ?? '');
+
+            // Try to resolve YOrm model classes for the main table and its relation tables.
+            $resolveModelClass = static function (string $table): ?string {
+                if ($table === '' || !class_exists('rex_yform_manager_dataset')) {
+                    return null;
+                }
+                if (!is_callable(['rex_yform_manager_dataset', 'getModelClass'])) {
+                    return null;
+                }
+                $model = rex_yform_manager_dataset::getModelClass($table);
+                return $model ?: null;
+            };
+
+            // Generate the public getter calls of a model class as echo-tag lines.
+            $renderGetters = static function (?string $modelClass, string $objectVar): string {
+                if ($modelClass === null || !class_exists($modelClass)) {
+                    return '';
+                }
+                try {
+                    $reflection = new ReflectionClass($modelClass);
+                } catch (ReflectionException $e) {
+                    return '';
+                }
+                $lines = [];
+                foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+                    if ($method->isStatic() || strpos($method->getName(), 'get') !== 0) {
+                        continue;
+                    }
+                    if ($method->getName() === 'get' || $method->getName() === 'getInstance') {
+                        continue;
+                    }
+                    $params = [];
+                    foreach ($method->getParameters() as $param) {
+                        $type = '';
+                        if ($param->hasType()) {
+                            $reflectionType = $param->getType();
+                            // Only render simple named types to avoid issues with union/intersection types
+                            if ($reflectionType instanceof ReflectionNamedType) {
+                                $type = $reflectionType->getName() . ' ';
+                            } else {
+                                $type = (string) $reflectionType . ' ';
+                            }
+                        }
+                        $default = $param->isDefaultValueAvailable()
+                            ? ' = ' . var_export($param->getDefaultValue(), true)
+                            : '';
+                        $params[] = '/* ' . $type . '*/ $' . $param->getName() . $default;
+                    }
+                    $paramsStr = implode(', ', $params);
+                    $lines[] = '    <?= $' . $objectVar . '->' . $method->getName() . '(' . $paramsStr . '); ?>';
+                }
+                return implode("\n", $lines);
+            };
+
+            $mainModel = $resolveModelClass($tableName);
+
+            // Collect optional relation tables (with their model classes).
+            $relations = [];
+            for ($i = 1; $i <= 3; ++$i) {
+                $relTableRaw = (string) ($profile['relation_' . $i . '_table_name'] ?? '');
+                if ($relTableRaw === '') {
+                    continue;
+                }
+                $relTable = explode('_xxx_', $relTableRaw)[1] ?? $relTableRaw;
+                $relations[] = [
+                    'table' => $relTable,
+                    'model' => $resolveModelClass($relTable),
+                ];
+            }
+            $hasRelations = count($relations) > 0;
+
+            // ---- Detail branch (single dataset) -------------------------------------------------
+            $detailFetch = $mainModel !== null
+                ? '    $dataset = ' . $mainModel . '::get($manager->getDatasetId());'
+                : '    $dataset = rex_yform_manager_table::get(\'' . $tableName . '\')->query()->findId($manager->getDatasetId());';
+
+            $detailGetters = $renderGetters($mainModel, 'dataset');
+            $detailGettersBlock = $detailGetters !== ''
+                ? "\n        <?php /* Verfügbare Getter der Model-Klasse " . $mainModel . " */ ?>\n" . $detailGetters . "\n"
+                : "        <h1><?= htmlspecialchars((string) \$dataset->getValue('name')) ?></h1>\n";
+
+            // ---- Relation switch (only when the profile has relations) --------------------------
+            $relationSwitch = '';
+            if ($hasRelations) {
+                $relationCases = '';
+                foreach ($relations as $rel) {
+                    $relFetch = $rel['model'] !== null
+                        ? '        $dataset = ' . $rel['model'] . '::get($manager->getDatasetId());'
+                        : '        $dataset = rex_yform_manager_table::get(\'' . $rel['table'] . '\')->query()->findId($manager->getDatasetId());';
+                    $relGetters = $renderGetters($rel['model'], 'dataset');
+                    $relGettersBlock = $relGetters !== ''
+                        ? "\n            <?php /* Verfügbare Getter der Model-Klasse " . $rel['model'] . " */ ?>\n" . preg_replace('/^    /m', '            ', $relGetters) . "\n"
+                        : "            <h1><?= htmlspecialchars((string) \$dataset->getValue('name')) ?></h1>\n";
+
+                    $relationCases .= "    } elseif (\$profile->getTableName() === '" . $rel['table'] . "') {\n"
+                        . "        // Datensatz stammt aus der Relationstabelle '" . $rel['table'] . "'\n"
+                        . $relFetch . "\n"
+                        . "        if (\$dataset) {\n"
+                        . "            ?>\n"
+                        . $relGettersBlock
+                        . "            <?php\n"
+                        . "        }\n";
+                }
+
+                $relationSwitch = "    \$profile = \$manager->getProfile();\n\n"
+                    . "    // Prüfen, aus welcher Tabelle der Datensatz stammt (Haupt- oder Relationstabelle)\n"
+                    . "    if (\$profile->getTableName() === '" . $tableName . "') {\n"
+                    . "        // Datensatz stammt aus der Haupttabelle '" . $tableName . "'\n"
+                    . preg_replace('/^/m', '    ', $detailFetch) . "\n"
+                    . "        if (\$dataset) {\n"
+                    . "            ?>\n"
+                    . preg_replace('/^        /m', '            ', $detailGettersBlock)
+                    . "            <?php\n"
+                    . "        }\n"
+                    . $relationCases
+                    . "    }\n";
+            } else {
+                $relationSwitch = $detailFetch . "\n"
+                    . "    if (\$dataset) {\n"
+                    . "        ?>\n"
+                    . $detailGettersBlock
+                    . "        <?php\n"
+                    . "    }\n";
+            }
+
+            // ---- List branch (overview) ---------------------------------------------------------
+            $listFetch = $mainModel !== null
+                ? '    $datasets = ' . $mainModel . '::query()->find();'
+                : '    $datasets = rex_yform_manager_table::get(\'' . $tableName . '\')->query()->find();';
+
+            $listLabel = $mainModel !== null && method_exists($mainModel, 'getName')
+                ? '$dataset->getName()'
+                : "\$dataset->getValue('name')";
+
+            // ---- Final assembly -----------------------------------------------------------------
+            $code = "<?php\n"
+                . "use Url\\Url;\n\n"
+                . "\$manager = Url::resolveCurrent();\n\n"
+                . "if (\$manager !== null) {\n"
+                . "    // === Detailseite =====================================================\n"
+                . $relationSwitch
+                . "} else {\n"
+                . "    // === Übersicht / Liste ==============================================\n"
+                . $listFetch . "\n"
+                . "    foreach (\$datasets as \$dataset) {\n"
+                . "        ?>\n"
+                . "        <a href=\"<?= rex_getUrl('', '', ['" . $namespace . "' => \$dataset->getId()]) ?>\">\n"
+                . "            <?= htmlspecialchars((string) " . $listLabel . ") ?>\n"
+                . "        </a>\n"
+                . "        <?php\n"
+                . "    }\n"
+                . "}\n";
+
+            return $code;
+        }
+    }
+
+    $profile_template_code = buildProfileTemplate($profile, $tableName);
+    $profile_template_modal_id = 'url-profile-template-' . (int) ($profile['id'] ?? 0);
+
     ?>
 <div class="panel panel-default">
 	<div class="panel-heading">
@@ -227,6 +406,12 @@ if ($article instanceof rex_article) {
 			<i class="rex-icon rex-icon-edit"></i>
 			<?php echo rex_i18n::msg('edit'); ?>
 		</a>
+		<button type="button" class="btn btn-default"
+			data-toggle="modal" data-target="#<?= $profile_template_modal_id ?>"
+			title="<?= rex_i18n::msg('url_generator_profile_copy_template_title') ?>">
+			<i class="rex-icon fa-clipboard"></i>
+			<?= rex_i18n::msg('url_generator_profile_copy_template') ?>
+		</button>
 		<a href="<?php echo rex_url::backendPage('url/generator/profiles', ['func' => 'delete', 'id' => $profile['id'] ?? ''] + rex_csrf_token::factory('url_profile_delete')->getUrlParams()); ?>"
 			class="btn btn-danger pull-right"
 			data-confirm="<?php echo rex_i18n::msg('delete'); ?> ?">
@@ -235,6 +420,83 @@ if ($article instanceof rex_article) {
 		</a>
 	</div>
 </div>
+
+<div class="modal fade" id="<?= $profile_template_modal_id ?>" tabindex="-1" role="dialog"
+	aria-labelledby="<?= $profile_template_modal_id ?>-label" aria-hidden="true">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title" id="<?= $profile_template_modal_id ?>-label">
+					<i class="rex-icon fa-clipboard"></i>
+					<?= rex_i18n::msg('url_generator_profile_copy_template_title') ?>
+					<small>#<?= (int) ($profile['id'] ?? 0) ?>
+						<?= htmlspecialchars($profile['namespace'] ?? '') ?></small>
+				</h4>
+			</div>
+			<div class="modal-body">
+				<p class="help-block"><?= rex_i18n::msg('url_generator_profile_copy_template_help') ?></p>
+				<pre style="max-height: 60vh; overflow: auto;"><code id="<?= $profile_template_modal_id ?>-code"><?= htmlspecialchars($profile_template_code) ?></code></pre>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">
+					<?= rex_i18n::msg('cancel') ?>
+				</button>
+				<button type="button" class="btn btn-primary"
+					data-url-copy-target="#<?= $profile_template_modal_id ?>-code"
+					data-url-copy-label-default="<?= rex_i18n::msg('url_generator_profile_copy_template_button') ?>"
+					data-url-copy-label-success="<?= rex_i18n::msg('url_generator_profile_copy_template_copied') ?>">
+					<i class="rex-icon fa-clipboard"></i>
+					<?= rex_i18n::msg('url_generator_profile_copy_template_button') ?>
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	(function () {
+		var modal = document.getElementById('<?= $profile_template_modal_id ?>');
+		if (!modal || modal.dataset.urlCopyBound === '1') {
+			return;
+		}
+		modal.dataset.urlCopyBound = '1';
+		var btn = modal.querySelector('[data-url-copy-target]');
+		if (!btn) {
+			return;
+		}
+		btn.addEventListener('click', function () {
+			var target = modal.querySelector(btn.getAttribute('data-url-copy-target'));
+			if (!target) {
+				return;
+			}
+			var text = target.textContent || '';
+			var done = function () {
+				var original = btn.getAttribute('data-url-copy-label-default');
+				var success = btn.getAttribute('data-url-copy-label-success');
+				btn.innerHTML = '<i class="rex-icon fa-check"></i> ' + success;
+				setTimeout(function () {
+					btn.innerHTML = '<i class="rex-icon fa-clipboard"></i> ' + original;
+				}, 2000);
+			};
+			if (navigator.clipboard && navigator.clipboard.writeText) {
+				navigator.clipboard.writeText(text).then(done, function () {});
+			} else {
+				var range = document.createRange();
+				range.selectNodeContents(target);
+				var sel = window.getSelection();
+				sel.removeAllRanges();
+				sel.addRange(range);
+				try {
+					document.execCommand('copy');
+					done();
+				} catch (e) {}
+				sel.removeAllRanges();
+			}
+		});
+	})();
+</script>
 <?php
 
 }
