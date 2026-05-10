@@ -128,7 +128,7 @@ if ($article instanceof rex_article) {
                         $params[] = '/* ' . $type . '*/ $' . $param->getName() . $default;
                     }
                     $paramsStr = implode(', ', $params);
-                    $lines[] = '    <?= $' . $objectVar . '->' . $method->getName() . '(' . $paramsStr . '); ?>';
+                    $lines[] = '    <?= rex_escape($' . $objectVar . '->' . $method->getName() . '(' . $paramsStr . ')) ?>';
                 }
                 return implode("\n", $lines);
             };
@@ -158,7 +158,7 @@ if ($article instanceof rex_article) {
             $detailGetters = $renderGetters($mainModel, 'dataset');
             $detailGettersBlock = $detailGetters !== ''
                 ? "\n        <?php /* Verfügbare Getter der Model-Klasse " . $mainModel . " */ ?>\n" . $detailGetters . "\n"
-                : "        <h1><?= htmlspecialchars((string) \$dataset->getValue('name')) ?></h1>\n";
+                : "        <h1><?= rex_escape(\$dataset->getValue('name')) ?></h1>\n";
 
             // ---- Relation switch (only when the profile has relations) --------------------------
             $relationSwitch = '';
@@ -171,7 +171,7 @@ if ($article instanceof rex_article) {
                     $relGetters = $renderGetters($rel['model'], 'dataset');
                     $relGettersBlock = $relGetters !== ''
                         ? "\n            <?php /* Verfügbare Getter der Model-Klasse " . $rel['model'] . " */ ?>\n" . preg_replace('/^    /m', '            ', $relGetters) . "\n"
-                        : "            <h1><?= htmlspecialchars((string) \$dataset->getValue('name')) ?></h1>\n";
+                        : "            <h1><?= rex_escape(\$dataset->getValue('name')) ?></h1>\n";
 
                     $relationCases .= "    } elseif (\$profile->getTableName() === '" . $rel['table'] . "') {\n"
                         . "        // Datensatz stammt aus der Relationstabelle '" . $rel['table'] . "'\n"
@@ -226,7 +226,7 @@ if ($article instanceof rex_article) {
                 . "    foreach (\$datasets as \$dataset) {\n"
                 . "        ?>\n"
                 . "        <a href=\"<?= rex_getUrl('', '', ['" . $namespace . "' => \$dataset->getId()]) ?>\">\n"
-                . "            <?= htmlspecialchars((string) " . $listLabel . ") ?>\n"
+                . "            <?= rex_escape(" . $listLabel . ") ?>\n"
                 . "        </a>\n"
                 . "        <?php\n"
                 . "    }\n"
