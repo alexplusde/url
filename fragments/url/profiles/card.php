@@ -111,7 +111,11 @@ if ($article instanceof rex_article) {
                         continue;
                     }
                     $params = [];
+                    $hasRequiredParams = false;
                     foreach ($method->getParameters() as $param) {
+                        if (!$param->isOptional()) {
+                            $hasRequiredParams = true;
+                        }
                         $type = '';
                         if ($param->hasType()) {
                             $reflectionType = $param->getType();
@@ -128,7 +132,14 @@ if ($article instanceof rex_article) {
                         $params[] = '/* ' . $type . '*/ $' . $param->getName() . $default;
                     }
                     $paramsStr = implode(', ', $params);
-                    $lines[] = '    <?= rex_escape($' . $objectVar . '->' . $method->getName() . '(' . $paramsStr . ')) ?>';
+                    $call = '<?= rex_escape($' . $objectVar . '->' . $method->getName() . '(' . $paramsStr . ')) ?>';
+                    if ($hasRequiredParams) {
+                        // Getter requires arguments – emit as a commented-out example so the
+                        // copied module stays runnable. Developers can uncomment and supply values.
+                        $lines[] = '    <!-- ' . $call . ' -->';
+                    } else {
+                        $lines[] = '    ' . $call;
+                    }
                 }
                 return implode("\n", $lines);
             };
