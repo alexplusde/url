@@ -109,7 +109,7 @@ class Yrewrite extends Rewriter
         if (!$domain) {
             return '';
         }
-        return $domain->getScheme();
+        return (string) $domain->getScheme();
     }
 
     /**
