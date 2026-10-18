@@ -220,7 +220,8 @@ class Profile
      */
     public function appendUserPaths(): string
     {
-        return $this->append_user_paths;
+        // fehlt in den Profil-Parametern älterer Profile, dann ist der Wert null
+        return (string) $this->append_user_paths;
     }
 
     /**
@@ -229,7 +230,7 @@ class Profile
     public function getUserPaths(): array
     {
         $array = [];
-        $lines = explode("\n", $this->append_user_paths);
+        $lines = explode("\n", $this->appendUserPaths());
         foreach ($lines as $line) {
             $parts = explode('=', $line);
             if (!isset($parts[1])) {
@@ -437,7 +438,7 @@ class Profile
             }
 
             if (!$manager->save()) {
-                // $return[] = $urlAsString;
+                throw new \rex_exception('Failed to save generated URL: '.$urlAsString);
             }
         }
 

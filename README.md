@@ -459,9 +459,7 @@ Dazu kann man ein zusätzliches YForm-Feld anlegen der das Indexieren speichert.
 
 ## Lizenz
 
-MIT Lizenz, siehe [LICENSE.md](https://github.com/alexplusde/url/blob/main/LICENSE.md)  
-
-## Autoren
+Proprietär, siehe [LICENSE](LICENSE)  ## Autoren
 
 [Alexander Walther](https://github.com/alxndr-w)
 
@@ -471,3 +469,11 @@ MIT Lizenz, siehe [LICENSE.md](https://github.com/alexplusde/url/blob/main/LICEN
 ## Credits
 
 Dieses Add-on ist ein Fork von `redaxo_url` von <https://github.com/tbaddade/redaxo_url>
+
+## Branch-Workflow
+
+- `main` ist geschützt. Direkte Pushes sind nicht möglich, Änderungen laufen ausschließlich
+  über Pull Requests.
+- Für jede Änderung einen Feature-Branch von `main` anlegen, zum Beispiel
+  `feature/neue-option`.
+- Der Feature-Branch wird per Pull Request nach `main` gemerged.

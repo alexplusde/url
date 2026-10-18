@@ -309,7 +309,19 @@ class Url
     protected function appendRewriterSuffix(): Uri
     {
         $this->removeRewriterSuffix();
-        return $this->uri = $this->uri->withPath($this->uri->getPath().self::$rewriter->getSuffix());
+        
+        // Check if the URL ends with a file extension
+        $path = $this->uri->getPath();
+        $lastSegment = basename($path);
+        
+        // If the last segment contains a file extension (including multi-part or long extensions, e.g. ".tar.gz", ".jsonld", ".properties"),
+        // don't append the rewriter suffix (trailing slash)
+        // Pattern requires at least one letter in each extension part to avoid matching purely numeric patterns like ".123"
+        if (preg_match('/(\.[a-zA-Z0-9]*[a-zA-Z][a-zA-Z0-9]*)+$/', $lastSegment)) {
+            return $this->uri;
+        }
+        
+        return $this->uri = $this->uri->withPath($path.self::$rewriter->getSuffix());
     }
 
     /**

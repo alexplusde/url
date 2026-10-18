@@ -17,6 +17,10 @@ class UrlManagerSql
 
     private \rex_sql $sql;
     private array $where = [];
+    
+    // Defer mechanism for URL_TABLE_UPDATED trigger
+    private static bool $deferTrigger = false;
+    private static bool $triggerPending = false;
 
     private function __construct()
     {
@@ -177,7 +181,8 @@ class UrlManagerSql
     public static function deleteAll(): void
     {
         $sql = self::factory();
-        $sql->sql->setQuery('TRUNCATE TABLE '.\rex::getTable(self::TABLE_NAME));
+        // Use DELETE instead of TRUNCATE so it can be part of a transaction
+        $sql->sql->setQuery('DELETE FROM '.\rex::getTable(self::TABLE_NAME));
 
         self::triggerTableUpdated();
     }
@@ -301,6 +306,31 @@ class UrlManagerSql
 
     public static function triggerTableUpdated(): void
     {
+        if (self::$deferTrigger) {
+            self::$triggerPending = true;
+            return;
+        }
         \rex_extension::registerPoint(new \rex_extension_point('URL_TABLE_UPDATED'));
+    }
+
+    /**
+     * Defer table-updated trigger until flush.
+     */
+    public static function deferTableUpdated(bool $defer = true): void
+    {
+        self::$deferTrigger = $defer;
+    }
+
+    /**
+     * Flush pending trigger and stop deferring.
+     */
+    public static function flushTableUpdated(): void
+    {
+        $shouldFire = self::$triggerPending;
+        self::$triggerPending = false;
+        self::$deferTrigger = false;
+        if ($shouldFire) {
+            \rex_extension::registerPoint(new \rex_extension_point('URL_TABLE_UPDATED'));
+        }
     }
 }
