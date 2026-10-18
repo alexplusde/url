@@ -1,84 +1,75 @@
 /**
  * URL Generator - Backend JavaScript
- * Adds click-to-copy functionality for URL call snippets
+ * Click-to-copy for the URL call snippets in the profile overview
  */
 
-(function($) {
+(function ($) {
     'use strict';
 
-    $(document).ready(function() {
-        // Add click-to-copy functionality to code elements with data-copy-target attribute
-        $('.url-code-copy').on('click', function(e) {
-            e.preventDefault();
-            
-            var $this = $(this);
-            var targetId = $this.data('copy-target');
-            var $textarea = $('#' + targetId);
-            
-            if ($textarea.length === 0) {
-                console.error('Copy target textarea not found:', targetId);
-                return;
-            }
-            
-            var textToCopy = $textarea.val();
-            
-            // Use the Clipboard API if available, fallback to older method
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(textToCopy).then(function() {
-                    showCopyFeedback($this);
-                }).catch(function(err) {
-                    fallbackCopyToClipboard($textarea, $this);
-                });
-            } else {
-                fallbackCopyToClipboard($textarea, $this);
-            }
-        });
-        
-        // Add keyboard accessibility (Enter or Space to trigger copy)
-        $('.url-code-copy').on('keydown', function(e) {
-            // Enter or Space key
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                $(this).trigger('click');
-            }
-        });
+    // Delegated on document: the backend loads pages via PJAX, so handlers
+    // bound once at document ready would miss cards rendered later.
+    $(document).on('click', '.url-code-copy', function (e) {
+        e.preventDefault();
+
+        var $code = $(this);
+        var text = $.trim($code.find('.url-code-copy-text').text());
+        if (text === '') {
+            return;
+        }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(function () {
+                showCopyFeedback($code);
+            }, function () {
+                fallbackCopy($code, text);
+            });
+        } else {
+            fallbackCopy($code, text);
+        }
     });
-    
+
+    // Enter or Space triggers the copy, like on a button
+    $(document).on('keydown', '.url-code-copy', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            $(this).trigger('click');
+        }
+    });
+
     /**
-     * Fallback copy method for older browsers or non-HTTPS contexts
+     * Fallback for browsers without the Clipboard API or outside HTTPS
      */
-    function fallbackCopyToClipboard($textarea, $element) {
+    function fallbackCopy($code, text) {
+        var $textarea = $('<textarea readonly></textarea>')
+            .val(text)
+            .css({position: 'fixed', top: 0, left: '-9999px'})
+            .appendTo(document.body);
+
         $textarea[0].select();
-        
         try {
-            document.execCommand('copy');
-            showCopyFeedback($element);
-        } catch (err) {
-            console.error('Failed to copy text: ', err);
-        }
-    }
-    
-    /**
-     * Show visual feedback when text is copied
-     */
-    function showCopyFeedback($element) {
-        var $icon = $element.find('.rex-icon');
-        
-        // Change icon to checkmark temporarily
-        if ($icon.length) {
-            $icon.removeClass('fa-copy').addClass('fa-check');
-        }
-        
-        // Add success class
-        $element.addClass('url-copied');
-        
-        // Reset after 2 seconds
-        setTimeout(function() {
-            if ($icon.length) {
-                $icon.removeClass('fa-check').addClass('fa-copy');
+            if (document.execCommand('copy')) {
+                showCopyFeedback($code);
             }
-            $element.removeClass('url-copied');
-        }, 2000);
+        } catch (err) {
+            // Copying is not possible, the snippet stays selectable by hand
+        }
+        $textarea.remove();
+        $code.trigger('focus');
     }
-    
+
+    /**
+     * Shows a checkmark for 2 seconds after copying
+     */
+    function showCopyFeedback($code) {
+        var $icon = $code.find('.rex-icon');
+
+        $icon.removeClass('fa-copy').addClass('fa-check');
+        $code.addClass('url-copied');
+
+        window.clearTimeout($code.data('urlCopyTimer'));
+        $code.data('urlCopyTimer', window.setTimeout(function () {
+            $icon.removeClass('fa-check').addClass('fa-copy');
+            $code.removeClass('url-copied');
+        }, 2000));
+    }
 })(jQuery);

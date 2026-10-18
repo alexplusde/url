@@ -245,7 +245,7 @@
 /* Click-to-copy styles */
 .url-code-copy {
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease;
     position: relative;
     padding: 2px 8px;
     border-radius: 3px;
