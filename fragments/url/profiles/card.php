@@ -268,9 +268,9 @@ if ($article instanceof rex_article) {
     ?>
 				<p class="help-block rex-note" style="font-size: 0.8em;">
 					Aufruf via
-					<code>rex_getUrl('', '', ['<?= htmlspecialchars($profile['namespace'] ?? '') ?>' => {id}])</code>
+					<code class="url-code-copy" role="button" tabindex="0" title="<?= rex_escape(rex_i18n::msg('url_generator_click_to_copy')) ?>"><i class="rex-icon fa-copy" aria-hidden="true"></i> <span class="url-code-copy-text">rex_getUrl('', '', ['<?= rex_escape($profile['namespace'] ?? '') ?>' => {id}])</span></code>
 					oder via Artikel
-					<code>rex_article::get(<?= $article->getId() ?>)->getUrl(['<?= htmlspecialchars($profile['namespace'] ?? '') ?>' => {id}])</code><br>
+					<code class="url-code-copy" role="button" tabindex="0" title="<?= rex_escape(rex_i18n::msg('url_generator_click_to_copy')) ?>"><i class="rex-icon fa-copy" aria-hidden="true"></i> <span class="url-code-copy-text">rex_article::get(<?= $article->getId() ?>)->getUrl(['<?= rex_escape($profile['namespace'] ?? '') ?>' => {id}])</span></code><br>
 
 
 				</p>
