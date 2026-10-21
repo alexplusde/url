@@ -605,12 +605,16 @@ class Profile
         return isset(self::$profiles[$id]);
     }
 
-    protected function getDataset(string $primaryColumnName, int|string $primaryId): ?rex_yform_manager_dataset
+    /**
+     * Liefert alle Zeilen zu einer Datensatz-ID als Collection. Mit Relationen
+     * oder Sprachspalte kann es mehr als eine Zeile geben, jede wird zu einer Url.
+     */
+    protected function getDataset(string $primaryColumnName, int|string $primaryId): rex_yform_manager_collection
     {
         $query = $this->buildQuery();
         $query->where($this->getColumnNameWithAlias($primaryColumnName), $primaryId);
         // $items = \rex_sql::factory()->setDebug()->getArray($query->getQuery(), $query->getParams());
-        return $query->findOne();
+        return $query->find();
     }
 
     protected function getDatasets(): rex_yform_manager_collection
