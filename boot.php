@@ -33,6 +33,7 @@ rex_extension::register('PACKAGES_INCLUDED', function (\rex_extension_point $epP
             'REX_FORM_SAVED',
             'REX_YFORM_SAVED',
             'YFORM_DATA_ADDED', 'YFORM_DATA_DELETED', 'YFORM_DATA_UPDATED',
+            'YFORM_DATA_STATUS_CHANGED',
         ];
 
         foreach ($extensionPoints as $extensionPoint) {

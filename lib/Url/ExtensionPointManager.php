@@ -186,6 +186,38 @@ class ExtensionPointManager
                 $this->setDatasetPrimaryColumnName($primaryKey);
                 $this->setDatasetTableName($object->getTableName());
                 break;
+
+            case 'YFORM_DATA_STATUS_CHANGED':
+                // yform_usability: Der Status-Umschalter in der Datenliste schreibt den Status direkt
+                // per rex_sql und meldet nur dieses EP, YFORM_DATA_UPDATED kommt dabei nicht.
+                // Beim Speichern über das Formular reicht yform_usability das EP aus YFORM_DATA_UPDATED
+                // heraus mit dem Datensatz als 'data' weiter. Dort baut YFORM_DATA_UPDATED die Urls auf.
+                if ($this->extensionPoint->getParam('data') instanceof \rex_yform_manager_dataset) {
+                    break;
+                }
+
+                $table = $this->extensionPoint->getParam('table');
+                $tableName = $table instanceof \rex_yform_manager_table ? $table->getTableName() : (string) $table;
+                $primaryId = $this->extensionPoint->getParam('data_id');
+                if ('' === $tableName || !$primaryId) {
+                    break;
+                }
+
+                $profiles = Profile::getByTableName($tableName);
+                if (empty($profiles)) {
+                    break;
+                }
+                $primaryKey = \rex_sql_table::get($tableName)->getPrimaryKey()[0];
+                if (null === $primaryKey) {
+                    break;
+                }
+
+                $this->setMode(self::MODE_UPDATE_URL_DATASET);
+                $this->setDatasetEditMode(true);
+                $this->setDatasetPrimaryId($primaryId);
+                $this->setDatasetPrimaryColumnName($primaryKey);
+                $this->setDatasetTableName($tableName);
+                break;
         }
     }
 

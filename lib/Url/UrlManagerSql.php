@@ -170,6 +170,10 @@ class UrlManagerSql
 
             self::triggerTableUpdated();
         } catch (\rex_sql_exception $e) {
+            // Nur eine bereits vergebene Url (url_hash) ist ein erwarteter Fall, alles andere weiterreichen.
+            if (\rex_sql::ERROR_VIOLATE_UNIQUE_KEY !== $e->getErrorCode()) {
+                throw $e;
+            }
             $success = false;
         }
         return $success;
