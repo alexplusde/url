@@ -438,7 +438,15 @@ class Profile
             }
 
             if (!$manager->save()) {
-                throw new \rex_exception('Failed to save generated URL: '.$urlAsString);
+                // Die Url ist schon vergeben, z.B. bei zwei Datensätzen mit gleichen Segmenten.
+                // Nicht abbrechen: Eine Exception rollt die Transaktion des Generators zurück, dann
+                // verwirft YForm das Speichern des Datensatzes bzw. scheitert der komplette Neuaufbau.
+                \rex_logger::factory()->log('warning', sprintf(
+                    'Url "%s" ist bereits vergeben und wurde für Profil %d, Datensatz %s nicht angelegt.',
+                    $urlAsString,
+                    $this->getId(),
+                    $dataset->getId()
+                ));
             }
         }
 
@@ -614,14 +622,27 @@ class Profile
         $query = $this->buildQuery();
         $query->where($this->getColumnNameWithAlias($primaryColumnName), $primaryId);
         // $items = \rex_sql::factory()->setDebug()->getArray($query->getQuery(), $query->getParams());
-        return $query->find();
+        return $this->removeFromInstancePool($query->find());
     }
 
     protected function getDatasets(): rex_yform_manager_collection
     {
         $query = $this->buildQuery();
         // $items = \rex_sql::factory()->setDebug()->getArray($query->getQuery(), $query->getParams());
-        return $query->find();
+        return $this->removeFromInstancePool($query->find());
+    }
+
+    /**
+     * find() legt jede Zeile im Instanz-Pool von YForm ab. Die Zeilen enthalten aber nur die
+     * Spalten der Url-Abfrage (data_id, data_segment_part_1, ...). Bleiben sie im Pool, liefert
+     * rex_yform_manager_dataset::get() im selben Request diesen unvollständigen Datensatz.
+     */
+    private function removeFromInstancePool(rex_yform_manager_collection $items): rex_yform_manager_collection
+    {
+        foreach ($items as $item) {
+            $item::clearInstance([$item->getTableName(), $item->getId()]);
+        }
+        return $items;
     }
 
     protected function buildQuery(): object
