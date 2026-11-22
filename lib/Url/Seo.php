@@ -118,15 +118,16 @@ class Seo
 
         /** @var null|YRewrite $rewriter */
         $rewriter = Url::getRewriter();
+        // Domain der Sitemap-Anfrage (Host), nicht die des aktuellen Artikels – siehe Yrewrite::getSitemapDomain().
+        // Kennt der Rewriter Domains, der Host aber keine, gehören keine Profil-URLs in die Sitemap.
+        $sitemapDomain = null !== $rewriter ? $rewriter->getSitemapDomain() : null;
+        if (null !== $rewriter && null === $sitemapDomain && $rewriter->usesSitemapDomains()) {
+            return [];
+        }
 
         $sitemap = [];
         foreach ($profiles as $profile) {
             if (!$profile->inSitemap()) {
-                continue;
-            }
-
-            // Befindet sich der Artikel in der aktuellen Domain?
-            if ($rewriter !== null && $rewriter->getDomainByArticleId($profile->getArticleId()) !== $rewriter->getCurrentDomain()) {
                 continue;
             }
 
@@ -164,6 +165,14 @@ class Seo
                 if ($profileUrl->isStructure()) {
                     $article = \rex_article::get($profileUrl->getArticleId(), $profileUrl->getClangId());
                     if (!$article->isOnline() || !$article->isPermitted()) {
+                        continue;
+                    }
+                }
+
+                // Nur URLs, deren Artikel in der Sprache der URL in der Domain der Sitemap liegt (Domains je Sprache möglich)
+                if (null !== $rewriter && null !== $sitemapDomain) {
+                    $urlDomain = $rewriter->getDomainByArticleId($profile->getArticleId(), $profileUrl->getClangId());
+                    if (null === $urlDomain || $urlDomain->getName() !== $sitemapDomain->getName()) {
                         continue;
                     }
                 }

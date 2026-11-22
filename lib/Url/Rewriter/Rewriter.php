@@ -24,6 +24,25 @@ abstract class Rewriter
     abstract public function getSitemapExtensionPoint(): string;
 
     /**
+     * Kennt der Rewriter Domains, nach denen die Sitemap gefiltert wird? Dann liefert getSitemapDomain() die Domain
+     * der Anfrage, und ohne Treffer bleibt die Sitemap ohne Profil-URLs. Die Standardimplementierung kennt keine
+     * Domains, alle Profile werden aufgenommen.
+     */
+    public function usesSitemapDomains(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Domain, für die der Rewriter gerade die Sitemap erzeugt (null: nicht zuzuordnen). Yrewrite liest sie aus dem
+     * Host der Anfrage.
+     */
+    public function getSitemapDomain(): ?object
+    {
+        return null;
+    }
+
+    /**
      * @return object
      */
     abstract public function getSeoInstance(): object;
