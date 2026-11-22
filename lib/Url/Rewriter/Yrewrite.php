@@ -26,14 +26,38 @@ class Yrewrite extends Rewriter
         return '';
     }
 
-    public function getDomainByArticleId($articleId)
+    public function getDomainByArticleId($articleId, ?int $clangId = null)
     {
-        return \rex_yrewrite::getDomainByArticleId($articleId);
+        return \rex_yrewrite::getDomainByArticleId($articleId, $clangId);
     }
 
     public function getCurrentDomain()
     {
         return \rex_yrewrite::getCurrentDomain();
+    }
+
+    public function usesSitemapDomains(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Domain der Sitemap-Anfrage wie in rex_yrewrite_seo::sendSitemap(): aus dem Host, bei einer einzigen Domain die
+     * Standarddomain. rex_yrewrite::getCurrentDomain() taugt dafür nicht, weil es die Domain über den aktuellen Artikel
+     * bestimmt – bei sitemap.xml ist das der 404- oder Startartikel, der bei gemeinsam genutzten Artikeln zu einer
+     * anderen Domain gehören kann (Sitemap von Domain A listete dann die Profile von Domain B, alexplusde/url#50).
+     * Kein Fallback auf den aktuellen Artikel: Bei unbekanntem Host lässt YRewrite die Sitemap leer, aber ruft den
+     * Extension Point trotzdem auf – dann gehören auch keine Profil-URLs hinein.
+     *
+     * @return \rex_yrewrite_domain|null
+     */
+    public function getSitemapDomain(): ?object
+    {
+        if (1 === count(\rex_yrewrite::getDomains())) {
+            return \rex_yrewrite::getDefaultDomain();
+        }
+
+        return \rex_yrewrite::getDomainByName(\rex_yrewrite::getHost());
     }
 
     /**
